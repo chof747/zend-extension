@@ -94,6 +94,13 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   {
     return new Chof_Model_Decorator_Resource($item);
   }
+  
+  protected function getCount()
+  #*****************************************************************************
+  {
+    return $this->model->getCount($this->getListFilter());
+  }
+  
   protected function isAllowed($item, $action)
   #*****************************************************************************
   {
@@ -181,7 +188,6 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   #*****************************************************************************
   {
     $models = $this->model->fetchAll($range[0], $range[1], $order, $listFilter);
-    $results = array();
     $result = array();
     
     foreach($models as $model)
@@ -222,6 +228,8 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     
       if (is_array($items))
       {
+        $this->getResponse()->setHeader('Content-Range', 
+          'items '.$range[0].'-'.$range[1].'/'.$this->getCount());
         $this->composeOutput($items, 200);
       }
       else
@@ -311,33 +319,6 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     }
   }
   
-  private function composeOutput($data = null, $OKResponseCode = 200, 
-                                 $htmlEncode = true)
-  #*****************************************************************************
-  {
-    try
-    {
-      if ($data !== null)
-      {
-        $this->getResponse()->appendBody(
-          (is_string($data)) ? ($htmlEncode) ? htmlentities($data) : $data 
-                             : $this->formatOutput($data));
-      }
-      
-      $this->getResponse()->setHttpResponseCode($OKResponseCode);
-    }
-    catch (WrongResultType $e)
-    {
-      $this->getResponse()->appendBody("Internal Server error: Handling wrong data types")
-                          ->setHttpResponseCode(500);    
-    }
-    catch (WrongResultFormat $e)
-    {
-      $this->getResponse()->appendBody("Format ".$this->getRequest()->getParams('format')." not supported!")
-                          ->setHttpResponseCode(400);    
-    }
-  }
-  
   public function schemaAction()
   #*****************************************************************************
   {
@@ -392,6 +373,33 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
         
       }
       
+    }
+  }
+  
+  private function composeOutput($data = null, $OKResponseCode = 200, 
+                                 $htmlEncode = true)
+  #*****************************************************************************
+  {
+    try
+    {
+      if ($data !== null)
+      {
+        $this->getResponse()->appendBody(
+          (is_string($data)) ? ($htmlEncode) ? htmlentities($data) : $data 
+                             : $this->formatOutput($data));
+      }
+      
+      $this->getResponse()->setHttpResponseCode($OKResponseCode);
+    }
+    catch (WrongResultType $e)
+    {
+      $this->getResponse()->appendBody("Internal Server error: Handling wrong data types")
+                          ->setHttpResponseCode(500);    
+    }
+    catch (WrongResultFormat $e)
+    {
+      $this->getResponse()->appendBody("Format ".$this->getRequest()->getParams('format')." not supported!")
+                          ->setHttpResponseCode(400);    
     }
   }
   

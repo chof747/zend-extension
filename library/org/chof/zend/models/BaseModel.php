@@ -396,10 +396,10 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * 
    * @return last primary id of the entity
    */
-  public function getCount()
+  public function getCount($filter = false)
   #****************************************************************************
   {
-    return $this->getMapper()->getCount();
+    return $this->getMapper()->getCount($filter);
   }  
 }
 ?>

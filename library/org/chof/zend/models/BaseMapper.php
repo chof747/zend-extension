@@ -253,12 +253,17 @@ abstract class Chof_Model_BaseMapper
    *
    * @return last used ID of mapped entity
    */
-  public function getCount()
+  public function getCount($filter = false)
   #****************************************************************************
   {
     $db = $this->_dbTable->getAdapter();
     
     $select = $db->select()->from($this->_dbTable->getTableName(), 'COUNT(*) AS C');
+    
+    if ($filter)
+    {
+      $select->where($filter);
+    }
     
     $rowset =  $db->query($select)->fetchAll();
     return $rowset[0]['C'];

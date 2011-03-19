@@ -115,8 +115,8 @@ abstract class Chof_Model_Decorator_Abstract extends Chof_Model_BaseModel
     return $this->model->getLastID();
   }  
 
-  public function getCount()  {
-    return $this->model->getCount();
+  public function getCount($filter = false)  {
+    return $this->model->getCount($filter);
   }     
 }
 ?>
