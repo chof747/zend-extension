@@ -282,12 +282,12 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
       }
       else
       {
-        throw new Exception('Invalid property specified');
+        throw new Exception("Invalid property specified $property");
       }
     }
     else
     {
-      throw new Exception('Invalid method specified');
+      throw new Exception("Invalid method specified $name");
     }
     
   }
