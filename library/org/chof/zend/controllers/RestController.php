@@ -109,8 +109,16 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     
     if (!$acl->isAllowed($this->getUserRole(), $this->getResource($item), $action))
     {
-      $this->getResponse()->appendBody("Not allowed to $action item with ID".$item->getPrimary())
-                          ->setHttpResponseCode(401);  
+      if ($item->getPrimary() !== null)
+      {
+        $this->getResponse()->appendBody("Not allowed to $action item with ID".$item->getPrimary())
+                            ->setHttpResponseCode(401);
+      }
+      else
+      {
+        $this->getResponse()->appendBody("Not allowed to $action the new item.")
+                            ->setHttpResponseCode(401);
+      }  
       
     }
     else

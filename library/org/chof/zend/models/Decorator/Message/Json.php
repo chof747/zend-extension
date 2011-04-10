@@ -83,6 +83,10 @@ class Chof_Model_Decorator_Message_Json extends Chof_Model_Decorator_Message_Abs
              $data[$attribute] =(float) $data[$attribute];
            }
          }
+         else
+         {
+           $data[$attribute] = null;
+         }
       }
     }
     

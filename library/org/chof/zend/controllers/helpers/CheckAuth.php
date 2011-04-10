@@ -1,12 +1,35 @@
 <?php
 class Chof_Controller_Helper_CheckAuth extends Zend_Controller_Action_Helper_Abstract
 {
+  private function getAuthenticationHeader()
+  #***************************************************************************** 
+  {
+    $authorization = $this->getRequest()->getHeader('Authorization');
+    if ($authorization)
+    {
+      list($method, $credentials) = explode(' ', $authorization, 2);
+  
+      switch ($method)
+      {
+        case 'Basic' : 
+          $credentials = base64_decode($credentials);
+          list($login,$password) = explode(':', $credentials);
+          return array(
+            'login' => $login,
+            'password' => $password
+          );
+          break;
+      }
+    }
+    return false;
+  }
  
   public function direct($params)
   #***************************************************************************** 
   {
     $auth = Zend_Auth::getInstance();
-    
+    $online = (isset($params['online']) ? $params['online'] : true);
+   
     //set the auth session storage to a specific session
     if (isset($params['session']))
     {
@@ -26,7 +49,19 @@ class Chof_Controller_Helper_CheckAuth extends Zend_Controller_Action_Helper_Abs
     {
       return $auth->getIdentity();;
     }
-    else
+    else if ($credentials = $this->getAuthenticationHeader())
+    {
+      $auth = (isset($params['authenticator']) ? $params['authenticator'] : null);
+      if ($auth instanceof Chof_Util_Interface_Authentication)
+      {
+        return $auth->validate($credentials['login'], $credentials['password']);
+      }
+      else
+      {
+        throw new Zend_Exception('No valid authenticator provided');
+      }
+    }
+    else if ($online)
     {
       $request = $this->getRequest();
       
@@ -44,6 +79,8 @@ class Chof_Controller_Helper_CheckAuth extends Zend_Controller_Action_Helper_Abs
 
       return false;
     }
+    else
+      return false;
   }
   
 }
