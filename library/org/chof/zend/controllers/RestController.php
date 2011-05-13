@@ -104,6 +104,8 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   protected function isAllowed($item, $action)
   #*****************************************************************************
   {
+    $item = ($item !== null) ? $item : $this->model;
+    
     $role = $this->getUserRole();
     $acl = $this->getAcl();
     
@@ -227,23 +229,26 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     }
     else
     {
-      $range = $this->getRequest()->getParam('range');
-      $range = ($range) ? $range : array(null, null);
-
-      $items = $this->getIndex($range, 
-        $this->getRequest()->getParam('order'),
-        $this->getListFilter());
-    
-      if (is_array($items))
+      if ($this->isAllowed(null, 'list'))
       {
-        $this->getResponse()->setHeader('Content-Range', 
-          'items '.$range[0].'-'.$range[1].'/'.$this->getCount());
-        $this->composeOutput($items, 200);
-      }
-      else
-      {
-        $this->getResponse()->appendBody("Item not found")
-                            ->setHttpResponseCode(404);  
+        $range = $this->getRequest()->getParam('range');
+        $range = ($range) ? $range : array(null, null);
+  
+        $items = $this->getIndex($range, 
+          $this->getRequest()->getParam('order'),
+          $this->getListFilter());
+      
+        if (is_array($items))
+        {
+          $this->getResponse()->setHeader('Content-Range', 
+            'items '.$range[0].'-'.$range[1].'/'.$this->getCount());
+          $this->composeOutput($items, 200);
+        }
+        else
+        {
+          $this->getResponse()->appendBody("Item not found")
+                              ->setHttpResponseCode(404);  
+        }
       }
     }
   }
