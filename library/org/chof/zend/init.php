@@ -11,6 +11,9 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
       'utilities' => array(
         'path' => 'utilities',
         'namespace' => 'Util_'),
+      'models' => array(
+        'path' => 'models',
+        'namespace' => 'Model_'),
       'controllers' => array(
         'path' => 'controllers',
         'namespace' => 'Controller_'),
@@ -29,7 +32,6 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
                                                    'Chof_Controller_Helper');  
     
     Zend_Validate::addDefaultNamespaces(array('Chof_Model_Validator'));
-    
     return $chof_autoloader;
 }
 

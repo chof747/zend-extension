@@ -355,7 +355,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
                       array(
                        'identifier' => $id,
                        'label'      => $label))
-               ->order($id);
+               ->order($label);
         
         if ('' != $filter = $this->getListFilter())
           $select->where($filter);
