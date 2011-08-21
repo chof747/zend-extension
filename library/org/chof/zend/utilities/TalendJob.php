@@ -85,18 +85,26 @@ class Chof_Util_TalendJob
     {
       $output = array();
       $ret = 0;
-      exec($this->jobs[$jobname]->jobURL, $output, $ret);
+      exec($this->jobs[$jobname]->jobURL." 2>&1", $output, $ret);
       
-      $output = $this->parseOutput($output);
+     
       
       if ($ret == 0)
+      {
+        $output = $this->parseOutput($output);
         return $output;
+      }
       else
-        throw new Zend_Exception("Talend Job Execution for: $jobname failed!\n$output");
+      {
+        $output = $this->parseOutput($output, true);
+        $e = new ExcecutionFailure("Talend Job Execution for: $jobname failed!");
+        $e->output = $output;
+        throw $e;
+      }
     }
   }
   
-  public function parseOutput($output)
+  public function parseOutput($output,  $asError = false)
   #*****************************************************************************
   {
     //eliminate repetition of shell commands in batch script 
@@ -106,6 +114,7 @@ class Chof_Util_TalendJob
     } while ((sizeof($output) > 0) && (!preg_match("/.*?java.*?--context.*?/", $line)));
     
     $info = array();
+    $error = array();
     
     //parse rest of output to see if structured information is provided
     foreach($output as $line)
@@ -117,9 +126,21 @@ class Chof_Util_TalendJob
           $info[$matches[1]] = $matches[2];
         }
       }
+      
+      if (!preg_match('/^\s*?at\s/', $line))
+      {
+        $error[] = $line;
+      }
     }
     
-    return (sizeof($info) > 0) ? $info : implode("\n", $output);
+    if ($asError)
+    {
+      return implode("\n", $error);
+    }
+    else
+    {
+      return (sizeof($info) > 0) ? $info : implode("\n", $output);
+    }
   }
   
   public function getJobs()
@@ -193,5 +214,11 @@ class Chof_Util_TalendJob
     }
   }
 }
+
+class ExcecutionFailure extends Zend_Exception
+{
+  public $output;
+}
+
 
 ?>
