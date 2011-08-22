@@ -85,9 +85,8 @@ class Chof_Util_TalendJob
     {
       $output = array();
       $ret = 0;
-      exec($this->jobs[$jobname]->jobURL." 2>&1", $output, $ret);
       
-     
+      exec("\"".$this->jobs[$jobname]->jobURL."\" 2>&1", $output, $ret);
       
       if ($ret == 0)
       {
