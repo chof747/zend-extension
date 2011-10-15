@@ -106,12 +106,16 @@ class Chof_Util_TalendJob
   public function parseOutput($output,  $asError = false)
   #*****************************************************************************
   {
-    //eliminate repetition of shell commands in batch script 
-    do 
+    if ($this->jobFileExtension == "bat")
     {
-      $line = array_shift($output);
-    } while ((sizeof($output) > 0) && (!preg_match("/.*?java.*?--context.*?/", $line)));
-    
+      //special treatment for batch files in windows:
+      //eliminate repetition of shell commands in batch script 
+      do 
+      {
+        $line = array_shift($output);
+      } while ((sizeof($output) > 0) && (!preg_match("/.*?java.*?--context.*?/", $line)));
+    }
+      
     $info = array();
     $error = array();
     
