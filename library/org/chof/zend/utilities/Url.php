@@ -5,7 +5,6 @@ class Chof_Util_Url
   public static function url($controller, $action, $params, $base = '')
   #*****************************************************************************
   {
-    
     $p = array();
     foreach($params as $param => $value)
     {
@@ -17,6 +16,13 @@ class Chof_Util_Url
     
     return $url;
     
+  }
+  
+  public static function baseUrl($url)
+  #*****************************************************************************
+  {
+    $controller = Zend_Controller_Front::getInstance();
+    return $controller->getBaseUrl().'/'.$url;
   }
 }
 

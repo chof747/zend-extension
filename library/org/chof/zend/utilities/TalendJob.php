@@ -21,20 +21,29 @@ class Chof_Util_TalendJob
   
   private $OUTPUT_TOKENS = array('output', 'input', 'problems', 'message');
   
-  public function __construct()
+  public function __construct($root = "", $extension = "sh")
   #*****************************************************************************
   {
     $chofconfig = Zend_Registry::get('chofconfig');
-    if (isset($chofconfig->talend->jobroot))
+
+    if ($root != "") 
     {
-       $this->jobRoot = $chofconfig->talend->jobroot;
-       $this->jobFileExtension = $chofconfig->talend->jobextension;
-       $this->jobs = array();
-       
-       $this->readJobsFromRoot();
+      $this->jobRoot = $root;
+      $this->jobFileExtension = $extension;
+      
+    }
+    else if (isset($chofconfig->talend->jobroot))
+    {
+      $this->jobRoot = $chofconfig->talend->jobroot;
+      $this->jobFileExtension = $chofconfig->talend->jobextension;
     }
     else
+    {
       throw new Zend_Exception("No job root directory for Talend ETL jobs provided!");
+    }
+
+    $this->jobs = array();
+    $this->readJobsFromRoot();
   }
   
   private function readJobsFromRoot()
