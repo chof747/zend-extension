@@ -87,7 +87,19 @@ class Chof_Util_TalendJob
     }
   }
   
-  public function executeJob($jobname)
+  private function parseParams($params)
+  #*****************************************************************************
+  {
+    $parameter = '';
+    foreach($params as $key => $value)
+    {
+      $parameter .= "--context_param $key=$value ";
+    }  
+    
+    return $parameter;
+  }
+  
+  public function executeJob($jobname, $params = array())
   #*****************************************************************************
   {
     if (isset($this->jobs[$jobname]))
@@ -95,7 +107,11 @@ class Chof_Util_TalendJob
       $output = array();
       $ret = 0;
       
-      exec("\"".$this->jobs[$jobname]->jobURL."\" 2>&1", $output, $ret);
+      exec("\"".
+           $this->jobs[$jobname]->jobURL.
+           "\" ".
+           $this->parseParams($params).
+           " 2>&1", $output, $ret);
       
       if ($ret == 0)
       {
@@ -147,11 +163,15 @@ class Chof_Util_TalendJob
     
     if ($asError)
     {
-      return implode("\n", $error);
+      return array('problems' => implode("\n", $error),
+                   'output' => "0",
+                   'input'  => "0");
     }
     else
     {
-      return (sizeof($info) > 0) ? $info : implode("\n", $output);
+      return (sizeof($info) > 0) ? $info : array('problems' => implode("\n", $output),
+                                                 'output' => "0",
+                                                 'input' => "0");
     }
   }
   

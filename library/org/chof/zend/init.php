@@ -23,8 +23,17 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
     
     $org = $bootstrap->getOption('org');
     
-    $config = new Zend_Config($org['chof']);
-    Zend_Registry::set('chofconfig', $config);
+    if (!empty($org))
+    {
+      $config = new Zend_Config($org['chof']);
+    }
+    else
+    {
+      $config = array();
+    } 
+    
+      Zend_Registry::set('chofconfig', $config);
+    
     
     
     //setup controller helpers and plugins
