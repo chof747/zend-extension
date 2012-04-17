@@ -18,12 +18,25 @@ class Chof_Model_DbTable_BaseTable extends Zend_Db_Table_Abstract
   }
   
   public function getTableName()
+  //****************************************************************************
   {
     return $this->_name;
   }
   
   public function _setupDatabaseAdapter()
+  //****************************************************************************
   {
      $this->_db = Chof_Util_DBCommander::getInstance()->db();
   }
+  
+  public function delete($where)
+  //****************************************************************************
+  {
+    $tbName = (property_exists($this, 'deleteName')) ? $this->deleteName : $this->_name;
+    
+    $tableSpec = ($this->_schema ? $this->_schema . '.' : '') . $tbName;
+        return $this->_db->delete($tableSpec, $where);
+  }
+  
+  
 }

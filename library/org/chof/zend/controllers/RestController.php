@@ -30,8 +30,6 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
    * 
    * $this->model parameter by creating and assigning to it a new instance of your
    * concrete BaseModel.
-   * 
-   * $this->id by defining the name of the primary key property.
    */
   abstract protected function initModelService();
   
@@ -101,6 +99,12 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     return $this->model->getCount($this->getListFilter());
   }
   
+  protected function requestHasId()
+  #*****************************************************************************
+  {
+    return $this->getRequest()->getParam($this->id);
+  }
+  
   protected function isAllowed($item, $action)
   #*****************************************************************************
   {
@@ -131,13 +135,13 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   
   public function init()
   #*****************************************************************************
-  {
+  {    
     $this->_helper->params();
     $this->_helper->viewRenderer->setNoRender(true);
 
     $layout = Zend_Layout::getMvcInstance();
     $layout->disableLayout();
-
+    
     $this->format = ($this->format = $this->getRequest()->getParam('format')) ? 
                      $this->format : 
                      'json';
@@ -162,6 +166,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     $new = ($item === null);
     $data = $this->_helper->params();
     $item = $new ? $this->model : $item;
+    
     
     try
     {
@@ -233,7 +238,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
       {
         $range = $this->getRequest()->getParam('range');
         $range = ($range) ? $range : array(null, null);
-  
+        
         $items = $this->getIndex($range, 
           $this->getRequest()->getParam('order'),
           $this->getListFilter());
@@ -256,7 +261,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   public function putAction()
   #*****************************************************************************
   {
-    if ($this->getRequest()->getParams($this->id))
+    if ($this->requestHasId())
     {
       try 
       {
@@ -274,7 +279,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   public function getAction()
   #*****************************************************************************
   {
-    if ($this->getRequest()->getParams($this->id))
+    if ($this->requestHasId())
     {
       try 
       {
@@ -308,7 +313,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   public function deleteAction()
   #*****************************************************************************
   {
-    if ($this->getRequest()->getParams($this->id))
+    if ($this->requestHasId())
     {
       try 
       {

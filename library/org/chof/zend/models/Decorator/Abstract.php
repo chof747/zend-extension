@@ -46,6 +46,14 @@ abstract class Chof_Model_Decorator_Abstract extends Chof_Model_BaseModel
     return $this->model->getPrimary();
   }
 
+  public function getId() {
+    return $this->model->getId();
+  }
+
+  public function getPrimaryFields() {
+    return $this->model->getPrimaryFields();
+  }
+
   protected function setPrimary($primary) {
     return $this->model->setPrimary($primary);
   }
@@ -59,11 +67,13 @@ abstract class Chof_Model_Decorator_Abstract extends Chof_Model_BaseModel
   }
   
   public function retrieveFromRequest(Zend_Controller_Request_Abstract $request) {
-    return $this->model->retrieveFromRequest($request);
+    $this->model->retrieveFromRequest($request);
+  	return $this;
   }
 
   public function retrieveFromID($id) {
-    return $this->model->retrieveFromID($id);
+    $this->model->retrieveFromID($id);
+  	return $this;
   }
   
   public function toArray($datetimefmt = '') {
@@ -74,8 +84,9 @@ abstract class Chof_Model_Decorator_Abstract extends Chof_Model_BaseModel
     return $this->model->delete();
   }
 
-  public function find($id) {
-    return $this->model->find($id);
+  public function find() {
+    return call_user_func_array(array($this->model, "find"), 
+                                func_get_args());
   }
 
   public function fetchAll($from = null, $to = null, 

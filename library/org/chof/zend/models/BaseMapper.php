@@ -33,6 +33,13 @@ abstract class Chof_Model_BaseMapper
       return array("$tablePrimKey = ?" => $id);
 
   }
+  
+  private function insertData($data)
+  //****************************************************************************
+  {
+    $newkey = $this->getDbTable()->insert($data);
+    $this->model->setPrimary($newkey);
+  }
 
   /**
    * Abstract method definition for saving the model to the mapped entity
@@ -56,13 +63,18 @@ abstract class Chof_Model_BaseMapper
         foreach($tablePrimKey  as $pk) unset($data[$pk]);
       else
         unset($data[$tablePrimKey]);
-
-      $newkey = $this->getDbTable()->insert($data);
       
-      $this->model->setPrimary($newkey);
+      $this->insertData($data);
     }
     else
-      $this->getDbTable()->update($data, $this->getPrimarySearchString($id));
+    {
+      $found = $this->queryTableById($id);
+      
+      if (count($found) == 0)
+        $this->insertData($data);        
+      else
+        $this->getDbTable()->update($data, $this->getPrimarySearchString($id));
+    }
   }
 
   /**
@@ -73,12 +85,19 @@ abstract class Chof_Model_BaseMapper
   public function delete($key)
   //****************************************************************************
   {
-    $tablePrimKey = $this->getDbTable()->getPrimaryKey();
-
-    if (null !== ($id = $this->model->getPrimary()))
-      return ($this->getDbTable()->delete($this->getPrimarySearchString($id)) > 0);
+    if ($key !== null)
+      return ($this->getDbTable()->delete($this->getPrimarySearchString($key)) > 0);
     else
       return false;    
+  }
+  
+  private function queryTableById($id)
+  //****************************************************************************
+  {
+    $id = is_array($id) ? $id : array($id);
+    return call_user_func_array(array($this->getDbTable(),"find"),
+                                $id);
+    
   }
 
   /**
@@ -87,15 +106,15 @@ abstract class Chof_Model_BaseMapper
    * @param $id the primary key
    * @return the model matching the primary key
    */
-  public function find($id)
+  public function find()
   //****************************************************************************
   {
-    $result = $this->getDbTable()->find($id);
+    $result = $this->queryTableById(func_get_args());
     
     $this->model = ($this->model) ? $this->model : $this->createModel();
     
     if (0 == count($result))
-      return;
+      return null;
     else
       return $this->fillFromRow($result->current(), $this->model);
   }
@@ -150,7 +169,18 @@ abstract class Chof_Model_BaseMapper
       
       $param = strtolower($param);
       if (in_array($param, $methods))
-      $select->$param($value);
+      
+      if (is_array($value))
+      {
+      	foreach($value as $v)
+      	{
+      		$select->$param($v);
+      	}
+      }
+      else
+      {
+        $select->$param($value);
+      }
     }
 
     return $this->fetchAll($select);

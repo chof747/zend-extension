@@ -33,9 +33,12 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * @param $options 
    */
   function __construct(array $options = null)
+  #****************************************************************************
   {
     if (is_array($options))
       $this->setOptions($options);
+
+    $this->initialize();
   }
  
   #-----------------------------------------------------------------------------
@@ -56,6 +59,41 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * @return the primary key of the model object
    */
   abstract public function getPrimary();
+  
+  /**
+   * Retrieves a one-field ID of the object
+   * 
+   * @return string of the id
+   */
+   public function getId()
+   #****************************************************************************
+   {
+     return $this->getPrimary();
+   }
+  
+  /**
+   * Retrieves the fields of the model object which are comprising the unique,
+   * primary key for the object.
+   * 
+   * This method is used by the retrieveFromRequest method to determine the
+   * request fields which are uniquely describing an object
+   * 
+   * The default implementation asumes that id is the name of the single-field
+   * primary key.
+   * 
+   * @return array with the name of the primary fields
+   */
+  public function getPrimaryFields()
+  #****************************************************************************
+  {
+    return array('id');
+  }
+  
+  protected function getPrimaryFromId($id)
+  #****************************************************************************
+  {
+    return array($id);
+  }
   
   /**
    * Primary key setup
@@ -108,9 +146,8 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    */
   public function retrieveFromRequest(Zend_Controller_Request_Abstract $request)
   #****************************************************************************
-  {
-     return $this->retrieveFromID($request->getParam('id'));
-   
+  {    
+    return $this->retrieveFromID($request->getParam('id', false));
   }
 
   /**
@@ -140,7 +177,8 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
     }
     else
     {
-      $model = $this->find($id);
+      $id = $this->getPrimaryFromId($id);
+      $model = call_user_func_array(array($this, "find"), $id);
     }
     
     if ($model === null)
@@ -175,7 +213,6 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   public function fromArray($array)
   #*****************************************************************************
   {
-    //var_dump($array);
     $this->getMapper()->fillFromRow($array, $this);
     $this->notifyChange();
   }
@@ -187,6 +224,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * key
    */
   public function delete()
+  #****************************************************************************
   {
     $this->getMapper()->delete($this->getPrimary());
     $this->setPrimary(null);
@@ -200,10 +238,11 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * @param  int $id
    * @return Default_Model_Guestbook
    */
-  public function find($id)
+  public function find()
   #****************************************************************************
   {
-    return $this->getMapper()->find($id);
+    return call_user_func_array(array($this->getMapper(), "find"), 
+                                func_get_args());
   }
 
   /**
@@ -257,7 +296,22 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   # GETTER AND SETTER METHODS
   #-----------------------------------------------------------------------------
 
+  /**
+   * Performs the get function of a datetime field based on the given format
+   *  
+   * @param string $format as used by the utility class Chof_Util_TimeUtils
+   * @param unknown_type $datetime the datetime property
+   */
+  protected function getDateTime($format, $datetime)
+  #****************************************************************************
+  {
+    $format = ($format == 'mysql') ? 'mysql-date' : $format;
+    return Chof_Util_TimeUtils::returnTime($format, $datetime);
+    
+  }
+  
   public function __call($name, $arguments)
+  #****************************************************************************
   {
     $prefix = substr($name, 0, 3);
     if (($prefix == 'get') || 
@@ -268,11 +322,29 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
       {
         if ($prefix == 'get')
         {
-          return $this->$property;
+          if ($this->$property instanceof DateTime)
+          {
+            $format = (isset($arguments[0])) ? $arguments[0] : 'datetime';
+            return Chof_Util_TimeUtils::returnTime($format, $this->$property);
+          }
+          else
+          {
+            return $this->$property;
+          }
         }
         else
         {
-          $this->$property = $arguments[0];
+          if ($this->$property instanceof DateTime)
+          {
+            //use utility function in case of datetime property
+            $this->$property = 
+              Chof_Util_TimeUtils::returnTime('datetime', $arguments[0]);
+          }
+          else
+          {
+            $this->$property = $arguments[0];
+          }
+          
           if ($property != 'id') 
           {
             $this->notifyChange();
@@ -347,7 +419,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   }
   
   /**
-   * @see Chof_Model_Interfate_Validateable::validate()
+   * @see Chof_Model_Interface_Validateable::validate()
    * 
    * The standard implementation of validate() simply returns true
    */
@@ -370,7 +442,6 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
 
     foreach ($options as $key => $value) 
     {
-      $key = strtolower($key);
       if (in_array($key, $vars)) 
       {
         $method = 'set'.ucfirst($key);

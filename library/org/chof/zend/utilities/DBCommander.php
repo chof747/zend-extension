@@ -4,6 +4,7 @@ class Chof_Util_DBCommander
 {
   static private $instance = null;
   
+  private $transactionCount = 0;
   private $dbhandle = null;
   
   private function __construct()
@@ -12,6 +13,7 @@ class Chof_Util_DBCommander
     $front = Zend_Controller_Front::getInstance();
     $db = Zend_Registry::get('db');
     $this->dbHandle = Zend_Db::factory($db);
+    $this->transactionCount = 0;
   }
   
   /**
@@ -57,22 +59,47 @@ class Chof_Util_DBCommander
     return $result;
   }
   
+  /**
+   * Enables careless beginTransaction and commits via a transaction counter
+   */
   public function beginTransaction()
   #*****************************************************************************
   {
-    $this->dbHandle->beginTransaction();
+    if ($this->transactionCount == 0)
+    {
+      $this->dbHandle->beginTransaction();
+    }
+    
+    ++$this->transactionCount;
+    //echo $this->transactionCount;
+    return $this;
   }
   
   public function commit()
   #*****************************************************************************
   {
-    $this->dbHandle->commit();
+    if ($this->transactionCount<=0) return;
+    
+    --$this->transactionCount;
+    //echo $this->transactionCount;
+    if($this->transactionCount == 0)
+    {
+      $this->dbHandle->commit();
+    }
+    
+    return $this;
   }
 
   public function rollback()
   #*****************************************************************************
   {
-    $this->dbHandle->rollback();
+  	if ($this->transactionCount > 0)
+  	{
+	    $this->dbHandle->rollback();
+	    $this->transactionCount = 0;
+  	}
+  	    
+    return $this;
   }
   
   public function db()
