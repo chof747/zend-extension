@@ -3,9 +3,8 @@
 class Chof_Util_TimeUtils 
 {
   
-  #****************************************************************************
   public static function returnTime($format, $time)
-  #****************************************************************************
+  //****************************************************************************
   {
     if (is_string($time))
     {
@@ -42,5 +41,98 @@ class Chof_Util_TimeUtils
       return $time->format($format);
     }
   }    
+  
+  private static function makePeriod($period)
+  //****************************************************************************
+  {
+  	switch ($period)
+  	{
+  		case 'Y' : return 'P1Y'; 
+  		case 'H' : return 'P6M';
+  		case 'Q' : return 'P3M';
+  		case 'W' : return 'P1W';
+  		case 'D' : return 'P1D';
+  		default:   return 'P1M';
+  	}
+  }
+  
+  public static function printPeriodsByTemplate($template)
+  //****************************************************************************
+  {
+  	$periods = array(
+  	  'Y' => 'yearly',
+  	  'H' => 'half-yearly',
+  	  'Q' => 'quaterly',
+  	  'M' => 'monthly',
+  	  'W' => 'weekly',
+  	  'D' => 'daily' );
+  	
+  	$results = array();
+  	
+  	foreach($periods as $symbol => $name)
+  	{
+  		$results[$symbol] = sprintf($template, $symbol, $name);
+  	}
+  	
+  	return $results;
+  }
+  
+  /**
+   * retrieves the date interval corresponding to the provided period identifier
+   * 
+   * Y - yearly
+   * H - half-yearly
+   * Q - quaterly
+   * M - monthly
+   * W - weekly
+   * D - daily
+   * 
+   * @param string $period
+   * @return DateInterval the corresponding date interval object
+   */
+  public static function intervalFromPeriod($period)
+  //***************************************************************************
+  {  	
+  	return new DateInterval(Chof_Util_TimeUtils::makePeriod($period));
+  }
+  
+  public static function closestIntervalStart(DateTime $startDate, $period)
+  //***************************************************************************
+  {
+  	$start = clone $startDate;
+  	$dateparts = getdate($start->getTimeStamp());
+  	
+  	switch($period)
+  	{
+  		case 'Y' : 
+  			$start->setDate($dateparts['year'], 1, 1); 
+  			break;
+  		
+  		case 'H' :
+  			$start->setDate($dateparts['year'],
+  			                ($dateparts['mon'] <= 6) ? 1 : 7,
+  			                1);
+  			break;
+  		
+  	  case 'Q' : 
+  			$start->setDate($dateparts['year'],
+  			                floor(($dateparts['mon'] - 1) / 3) * 3 + 1,
+  			                1);
+  			break;
+  	  
+  	  case 'M' :
+  	  	$start->setDate($dateparts['year'],
+  	  	                $dateparts['mon'],
+  	  	                1);
+  	  	break;
+
+  	  case 'W' :
+  	    $daydiff = ($dateparts['wday'] == 0) ? 6 : $dateparts['wday'] - 1;
+  	    $start->sub(new DateInterval('P'.$daydiff.'D'));
+  	    break; 
+  	}
+  	
+  	return $start;
+  }
 }
 ?>

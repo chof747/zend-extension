@@ -68,7 +68,13 @@ class Chof_View_Helper_ControlledDojo extends Zend_Dojo_View_Helper_Dojo
       "dojo.addOnLoad(function( ) {\n  ".
       ($this->dojo()->getDjConfigOption('parseOnLoad') ? 
          "" : "dojo.require('dojo.parser');\n  dojo.parser.parse( );\n  ").
-      join("\n  ", $controllers)."\n});\n");
+      join("\n  ", $controllers)."\n".
+      
+      "  if(typeof(dojo.layoutOnLoad) == 'function')\n".
+      "  {\n".
+      "    dojo.layoutOnLoad();\n".
+      "  }\n".
+      "});\n");
   
   return $this;
   }

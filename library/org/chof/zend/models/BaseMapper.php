@@ -182,6 +182,8 @@ abstract class Chof_Model_BaseMapper
         $select->$param($value);
       }
     }
+    
+    //echo $select->__toString();
 
     return $this->fetchAll($select);
   }

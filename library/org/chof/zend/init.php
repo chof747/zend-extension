@@ -1,5 +1,7 @@
 <?php
 
+include_once dirname(__FILE__).'/functions/Math.php';
+
 function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
 {
       $chof_autoloader = new Zend_Application_Module_Autoloader(array(
@@ -17,6 +19,9 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
       'controllers' => array(
         'path' => 'controllers',
         'namespace' => 'Controller_'),
+      'controller_helper' => array(
+        'path' => 'controllers/helpers',
+        'namespace' => 'Controller_Helper'),
       'controller_plugins' => array(
           'path' => 'controllers/plugins/',
           'namespace' => 'Controller_Plugin')));
