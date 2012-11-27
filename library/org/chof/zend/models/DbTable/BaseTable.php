@@ -38,5 +38,11 @@ class Chof_Model_DbTable_BaseTable extends Zend_Db_Table_Abstract
         return $this->_db->delete($tableSpec, $where);
   }
   
+  public function hasAutomatedSequence()
+  //****************************************************************************
+  {
+  	return $this->_sequence;
+  }
+  
   
 }

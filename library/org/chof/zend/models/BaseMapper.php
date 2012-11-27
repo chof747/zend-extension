@@ -37,8 +37,12 @@ abstract class Chof_Model_BaseMapper
   private function insertData($data)
   //****************************************************************************
   {
-    $newkey = $this->getDbTable()->insert($data);
-    $this->model->setPrimary($newkey);
+  	$table = $this->getDbTable();
+    $newkey = $table->insert($data);
+    if ($table->hasAutomatedSequence())
+    {
+      $this->model->setPrimary($newkey);
+    }
   }
 
   /**

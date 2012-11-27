@@ -36,6 +36,12 @@ class Chof_Util_TimeUtils
         case  'xml'  : $format = 'Y-m-d\TH:i:s'; break;
         case  'mysql' : $format = 'Y-m-d H:i:s'; break;
         case  'mysql-date' : $format = 'Y-m-d'; break;
+        
+        //special printing formats
+        case 'date-long'       : $format = 'l, d.M.Y'; break;
+        case 'date-short'      : $format = 'd.M.Y'; break;
+        case 'datetime-long'   : $format = 'l, d.M.Y H:i:s e'; break;
+        case 'datetime-short'  : $formst = 'd.M.Y H:i:s'; break;
       }
 
       return $time->format($format);

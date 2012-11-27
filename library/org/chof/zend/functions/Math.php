@@ -31,3 +31,18 @@ function signum($number)
 		return 0;
 	}
 }
+
+function randString($length)
+//******************************************************************************
+{
+  $chars = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+  $randString = '';	
+
+	$size = strlen($chars);
+	for($i=0;$i<$length;$i++) 
+	{
+		$randString .= $chars[rand(0, $size-1)];
+	}
+
+	return $randString;
+}

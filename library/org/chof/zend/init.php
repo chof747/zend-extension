@@ -10,6 +10,9 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
     ));
     
     $chof_autoloader->addResourceTypes(array(
+      'modules'   => array(
+        'path' => 'modules', 
+        'namespace' => 'Zend_'),
       'utilities' => array(
         'path' => 'utilities',
         'namespace' => 'Util_'),
