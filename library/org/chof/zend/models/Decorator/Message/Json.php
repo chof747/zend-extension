@@ -126,6 +126,11 @@ class Chof_Model_Decorator_Message_Json extends Chof_Model_Decorator_Message_Abs
     return Zend_Json::decode($message);  
   }
   
+  
+  public function getContentType()
+  {
+    return "application/json";
+  }
 }
 
 ?>

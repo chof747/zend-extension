@@ -49,7 +49,13 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
                                                    'Chof_Controller_Helper');  
     
     Zend_Validate::addDefaultNamespaces(array('Chof_Model_Validator'));
+    $pluginloader = $bootstrap->getPluginLoader();
+    $pluginloader->addPrefixPath('Chof_Resource', dirname(__FILE__).'/resources');
+    
     return $chof_autoloader;
+
+    
+    $bootstrap->setPluginLoader($pluginloader);
 }
 
 ?>

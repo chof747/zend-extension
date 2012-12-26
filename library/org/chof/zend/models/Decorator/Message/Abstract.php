@@ -44,6 +44,20 @@ abstract class Chof_Model_Decorator_Message_Abstract extends Chof_Model_Decorato
    */
   abstract public function decode($message);
   
+  /**
+   * @return the content type string for the message 
+   */
+  abstract public function getContentType();
+
+  /**
+   * Each format can specify specific response headers. Default is nothing
+   * 
+   * @return an array of additional content header
+   */
+  public function getResponseHeaders()
+  {
+    return array();
+  }
   
   /**
    * Retrieves a schema of the message format in an appropriate format.

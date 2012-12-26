@@ -159,7 +159,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   
   public function init()
   #*****************************************************************************
-  {    
+  {        
     $this->_helper->params();
     $this->_helper->viewRenderer->setNoRender(true);
 
@@ -169,10 +169,12 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     $this->format = ($this->format = $this->getRequest()->getParam('format')) ? 
                      $this->format : 
                      'json';
-    $this->getResponse()->setHeader('Content-type', "application/$this->format");
-    
+                         
     $this->initModelService();
-    $this->model = $this->makeMessageModel($this->model);
+    $this->model = $this->makeMessageModel($this->model, $this->format);
+    
+    $this->getResponse()->setHeader('Content-type', $this->model->getContentType());
+    
   }
   
   /**
@@ -268,11 +270,18 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     	
       if (is_array($items))
       {
-      	if ($this->isAllowed($items[0], 'list'))
+        if (count($items)>0)
         {
+      	  if ($this->isAllowed($items[0], 'list'))
+          {
   
-          $this->getResponse()->setHeader('Content-Range', 
-            'items '.$range[0].'-'.$range[1].'/'.$this->getCount());
+            $this->getResponse()->setHeader('Content-Range', 
+              'items '.$range[0].'-'.$range[1].'/'.$this->getCount());
+            $this->composeOutput($items, 200);
+          }
+        }
+        else 
+        {
           $this->composeOutput($items, 200);
         }
       }
@@ -428,6 +437,11 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     {
       if ($data !== null)
       {
+        foreach ($this->model->getResponseHeaders() as $header => $content)
+        {
+          $this->getResponse()->setHeader($header, $content);
+        }
+        
         $this->getResponse()->appendBody(
           (is_string($data)) ? ($htmlEncode) ? htmlentities($data) : $data 
                              : $this->formatOutput($data));

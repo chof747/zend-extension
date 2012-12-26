@@ -226,8 +226,10 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   public function delete()
   #****************************************************************************
   {
-    $this->getMapper()->delete($this->getPrimary());
+    $result = $this->getMapper()->delete($this->getPrimary());
     $this->setPrimary(null);
+    
+    return $result;
   }
 
   /**

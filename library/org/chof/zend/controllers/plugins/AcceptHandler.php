@@ -22,15 +22,21 @@ class Chof_Controller_Plugin_AcceptHandler extends Zend_Controller_Plugin_Abstra
   private function initAcceptFormat()
   #*****************************************************************************
   {
-    $header = $this->getRequest()->getHeader('Accept');
-    $format = 'json';
-    
-    if ($header)
+    if (!($this->getRequest()->getParam('format')))
     {
-      $format =  (strstr($header, 'application/xml') && (!strstr($header, 'html'))) ? 'xml' : 'json';
+      $header = $this->getRequest()->getHeader('Accept');
+      $format = 'json';
+    
+      if ($header)
+      {
+        $format = (strstr($header, 'application/xml') && (!strstr($header, 'html'))) 
+          ? 'xml' 
+          : 'json';
+      }
+    
+      $this->getRequest()->setParam('format', $format);    
     }
     
-    $this->getRequest()->setParam('format', $format);    
   }
   
   private function initRange()

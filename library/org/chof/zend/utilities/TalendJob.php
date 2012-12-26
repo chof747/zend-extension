@@ -25,7 +25,7 @@ class Chof_Util_TalendJob
   #*****************************************************************************
   {
     $chofconfig = Zend_Registry::get('chofconfig');
-
+    
     if ($root != "") 
     {
       $this->jobRoot = $root;
@@ -72,7 +72,14 @@ class Chof_Util_TalendJob
   {
     $job = new TalendJob();
     $tokens = explode('_', $directory);
-    $job->version = array_pop($tokens);
+    if (count($tokens) >1 )
+    {
+      $job->version = array_pop($tokens);
+    }
+    else
+    {
+    	$job->version = "";
+    }
     $jobName = implode('_', $tokens);
     $job->jobURL = $path.'/'.$jobName.'/'.$jobName.'_run.'.$this->jobFileExtension; 
     
@@ -95,7 +102,6 @@ class Chof_Util_TalendJob
     {
       $parameter .= "--context_param $key=$value ";
     }  
-    
     return $parameter;
   }
   
@@ -112,7 +118,7 @@ class Chof_Util_TalendJob
            "\" ".
            $this->parseParams($params).
            " 2>&1", $output, $ret);
-      
+           
       if ($ret == 0)
       {
         $output = $this->parseOutput($output);
@@ -151,7 +157,7 @@ class Chof_Util_TalendJob
       {
         if ((sizeof($matches) == 3) && (in_array($matches[1], $this->OUTPUT_TOKENS)))
         {
-          $info[$matches[1]] = $matches[2];
+          $info[$matches[1]] = trim($matches[2]);
         }
       }
       

@@ -19,9 +19,9 @@ class Chof_View_Helper_ControlledDojo extends Zend_Dojo_View_Helper_Dojo
         $this->basens = $basenamespace;
       }
       
-      $this->dojo()->requireModule("dijit.dijit");
-      $this->dojo()->requireModule("dijit.dijit-all");
-      $this->dojo()->requireModule("dojox.gfx");
+      //$this->dojo()->requireModule("dijit.dijit");
+      //$this->dojo()->requireModule("dijit.dijit-all");
+      //$this->dojo()->requireModule("dojox.gfx");
     }
     return $this;
   }
@@ -37,7 +37,7 @@ class Chof_View_Helper_ControlledDojo extends Zend_Dojo_View_Helper_Dojo
     {
       $controller_module = strtolower($controller);
       $this->controller[$controller] = $constructorArguments;
-      $this->dojo()->requireModule($this->basens.'.controller.'.$controller_module);
+      //$this->dojo()->requireModule($this->basens.'.controller.'.$controller_module);
     }  
     return $this;
   }
@@ -46,6 +46,10 @@ class Chof_View_Helper_ControlledDojo extends Zend_Dojo_View_Helper_Dojo
   #*****************************************************************************
   {
     $controllers = array();
+    $controllerModule = array();
+    $controllerVar = array();
+    
+    $basePath = str_replace('.', '/', $this->basens);
     
     foreach ($this->controller as $controller => $constructorArguments)
     {
@@ -59,22 +63,31 @@ class Chof_View_Helper_ControlledDojo extends Zend_Dojo_View_Helper_Dojo
       }
             
       $controllers[] = 
-        "  ctrl$controller = new $this->basens.controller.$controller(".
+        "  ctrl$controller = new $controller(".
         join(", ", $arguments).
         ");";
+        
+      $controllerModule[] = strtolower("'$basePath/controller/$controller'");
+      $controllerVar[] = $controller;
     }
     
+    array_unshift($controllerModule, "'dojo/ready'");
+    array_unshift($controllerVar, 'ready');
+    
     $this->view->headScript()->prependScript(
-      "dojo.addOnLoad(function( ) {\n  ".
+      "require([".join(',', $controllerModule)."], ".
+      "function(".join(",", $controllerVar).") {\n".
+      "  ready(function( ) {\n    ".
       ($this->dojo()->getDjConfigOption('parseOnLoad') ? 
          "" : "dojo.require('dojo.parser');\n  dojo.parser.parse( );\n  ").
       join("\n  ", $controllers)."\n".
       
-      "  if(typeof(dojo.layoutOnLoad) == 'function')\n".
-      "  {\n".
-      "    dojo.layoutOnLoad();\n".
-      "  }\n".
-      "});\n");
+      "    if(typeof(dojo.layoutOnLoad) == 'function')\n".
+      "    {\n".
+      "      dojo.layoutOnLoad();\n".
+      "    }\n".
+      "  });\n".
+      "});");
   
   return $this;
   }

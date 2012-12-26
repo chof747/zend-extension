@@ -37,6 +37,9 @@ class Chof_Util_TimeUtils
         case  'mysql' : $format = 'Y-m-d H:i:s'; break;
         case  'mysql-date' : $format = 'Y-m-d'; break;
         
+        //format for file timestamps
+        case  'file' : $format = 'YmdHis'; break;
+        
         //special printing formats
         case 'date-long'       : $format = 'l, d.M.Y'; break;
         case 'date-short'      : $format = 'd.M.Y'; break;
