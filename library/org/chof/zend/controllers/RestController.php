@@ -105,6 +105,24 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     return $this->getRequest()->getParam($this->id);
   }
   
+  protected function echoKey($key)
+  {
+  	$keystring = '';
+  	if (is_array($key))
+  	{
+  		$keystring = "\n";
+  		$fields = array_keys($key);
+  		foreach($fields as $f)
+  		{
+  			$keystring .= "$f with ".$key[$f]."\n";
+  		}
+  	}
+  	else
+  	  $keystring = $key;
+  	
+  	return $keystring;
+  }
+  
   protected function isAllowed($item, $action)
   #*****************************************************************************
   {
@@ -113,11 +131,15 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     $role = $this->getUserRole();
     $acl = $this->getAcl();
     
-    if (!$acl->isAllowed($this->getUserRole(), $this->getResource($item), $action))
+    $allowed = $acl->isAllowed($this->getUserRole(), 
+                              $this->getResource($item), $action); 
+    
+    if (!$allowed)
     {
       if ($item->getPrimary() !== null)
       {
-        $this->getResponse()->appendBody("Not allowed to $action item with ID".$item->getPrimary())
+        $this->getResponse()->appendBody("Not allowed to $action item with ID".
+                                         $this->echoKey($item->getPrimary()))
                             ->setHttpResponseCode(401);
       }
       else
@@ -125,6 +147,8 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
         $this->getResponse()->appendBody("Not allowed to $action the new item.")
                             ->setHttpResponseCode(401);
       }  
+      
+      return false;
       
     }
     else
@@ -234,26 +258,28 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     }
     else
     {
-      if ($this->isAllowed(null, 'list'))
-      {
-        $range = $this->getRequest()->getParam('range');
-        $range = ($range) ? $range : array(null, null);
+      $range = $this->getRequest()->getParam('range');
+      $range = ($range) ? $range : array(null, null);
         
-        $items = $this->getIndex($range, 
-          $this->getRequest()->getParam('order'),
-          $this->getListFilter());
+      $items = $this->getIndex($range, 
+        $this->getRequest()->getParam('order'),
+        $this->getListFilter());
       
-        if (is_array($items))
+    	
+      if (is_array($items))
+      {
+      	if ($this->isAllowed($items[0], 'list'))
         {
+  
           $this->getResponse()->setHeader('Content-Range', 
             'items '.$range[0].'-'.$range[1].'/'.$this->getCount());
           $this->composeOutput($items, 200);
         }
-        else
-        {
-          $this->getResponse()->appendBody("Item not found")
-                              ->setHttpResponseCode(404);  
-        }
+      }
+      else
+      {
+        $this->getResponse()->appendBody("Item not found")
+                            ->setHttpResponseCode(404);  
       }
     }
   }

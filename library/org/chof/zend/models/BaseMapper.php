@@ -44,6 +44,26 @@ abstract class Chof_Model_BaseMapper
       $this->model->setPrimary($newkey);
     }
   }
+  
+  /**
+   * An API method which is called before data is written to the database but
+   * after the data has been prepared in an array by saveData. This method is
+   * necessary as a plugin for calculations and computations which are necessary 
+   * if data has to be prepared specifically for database storage but not for 
+   * communications via other channels (e.g. services).
+   * 
+   * An example to use this method is for encrypting before storing in the 
+   * database. The default implementation simply passes the data as is.
+   * 
+   * @param array $data
+   * @return the prepared data (a simple pass through in the standard 
+   *         implementation.
+   */
+  protected function beforeDataBaseSave($data)
+  //****************************************************************************
+  {
+  	return $data;
+  }
 
   /**
    * Abstract method definition for saving the model to the mapped entity
@@ -58,7 +78,9 @@ abstract class Chof_Model_BaseMapper
       throw new Exception("no model set!");
     }
     
-    $data = $this->saveData($this->model);
+    $data = $this->beforeDataBaseSave(
+              $this->saveData($this->model));
+              
     $tablePrimKey = $this->getDbTable()->getPrimaryKey();
 
     if (null === ($id = $this->model->getPrimary()))
@@ -103,6 +125,46 @@ abstract class Chof_Model_BaseMapper
                                 $id);
     
   }
+  
+  /**
+   * 
+   * Wrapper function which takes a native row from the database allows a 
+   * preprocessing by the afterDatabaseRead() method and creates the model
+   * from the abstract fillFromRow() method.
+   * 
+   * @param array $row the row containing the data for the model instance
+   * @param Chof_Model_BaseModel $model the model instance to be filled
+   * @param string $datetimefmt the format of date/time conversion
+   */
+  private function readData($row, 
+                            Chof_Model_BaseModel $model, 
+                            $datetimefmt = '')
+  //****************************************************************************
+  {
+  	 $row = $this->afterDatabaseRead($row);
+  	 return $this->fillFromRow($row, $model, $datetimefmt);
+  }
+  
+  /**
+   * An API method which is called after data is read from the database but
+   * before the data is processed by fillFromRow(). This method is
+   * necessary as a plugin for calculations and computations which are necessary 
+   * if data has to be prepared specifically for loading into a model instance 
+   * from the database but not for communications via other channels (e.g. #
+   * services).
+   * 
+   * An example to use this method is for encrypting before storing in the 
+   * database. The default implementation simply passes the row data as is.
+   * 
+   * @param array $row a result row from the database
+   * @return the prepared data (a simple pass through in the standard 
+   *         implementation.
+   */
+  protected function afterDatabaseRead($row)
+  //****************************************************************************
+  {
+  	return $row;
+  }
 
   /**
    * Method to search for a model based on the primary key
@@ -120,7 +182,7 @@ abstract class Chof_Model_BaseMapper
     if (0 == count($result))
       return null;
     else
-      return $this->fillFromRow($result->current(), $this->model);
+      return $this->readData($result->current(), $this->model);
   }
 
   /**
@@ -137,7 +199,7 @@ abstract class Chof_Model_BaseMapper
     foreach ($resultSet as $row)
     {
       $entry = $this->createModel();
-      $this->fillFromRow($row, $entry);
+      $this->readData($row, $entry);
       $entries[] = $entry;
     }
 
