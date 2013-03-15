@@ -108,6 +108,12 @@ class Chof_Util_DBCommander
      $this->dbHandle->getConnection();
      return $this->dbHandle; 
   }
+  
+  public function quote($value)
+  {
+  	//$this->dbhandle->getConnection();
+  	return $this->dbHandle->quote($value);
+  }
 }
 
 ?>
