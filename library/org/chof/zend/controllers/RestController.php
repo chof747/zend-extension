@@ -132,8 +132,8 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     $acl = $this->getAcl();
     
     $allowed = $acl->isAllowed($this->getUserRole(), 
-                              $this->getResource($item), $action); 
-    
+                              $this->getResource($item), $action);
+
     if (!$allowed)
     {
       if ($item->getPrimary() !== null)

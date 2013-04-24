@@ -59,5 +59,18 @@ class Chof_View_Helper_BaseHelper extends Zend_View_Helper_Abstract
       
     return $output;
   }
+  
+  protected function printVar($var)
+  #***************************************************************************
+  {
+  	if(is_bool($var))
+  	{
+  		return $var ? "true" : "false";
+  	}	
+  	else
+  	{
+  		return $var;
+  	}
+  }
 }
 ?>

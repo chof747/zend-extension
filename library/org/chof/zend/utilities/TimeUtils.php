@@ -2,6 +2,13 @@
 
 class Chof_Util_TimeUtils 
 {
+	
+	public static function transformTime($newFormat, $time)
+  //****************************************************************************
+	{
+		$dtime  = self::returnTime('datetime', $time);
+		return self::returnTime($newFormat, $dtime);
+	}
   
   public static function returnTime($format, $time)
   //****************************************************************************

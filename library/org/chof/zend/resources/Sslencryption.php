@@ -1,6 +1,6 @@
 <?php
 
-class Chof_Resource_SslEncryption extends 
+class Chof_Resource_Sslencryption extends 
   Zend_Application_Resource_ResourceAbstract
 {
 	private $encryption = null;

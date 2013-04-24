@@ -85,4 +85,12 @@ class Chof_Model_ValidationException extends Zend_Exception
       ? $this->details[$field]['message'] 
       : false;
   }
+  
+  public function getErrorCode($field)
+  #*****************************************************************************
+  {
+    return ($this->hasError($field)) 
+      ? $this->details[$field]['code'] 
+      : false;
+  }
 }

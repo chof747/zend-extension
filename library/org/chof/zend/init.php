@@ -52,6 +52,7 @@ function initChof(Zend_Application_Bootstrap_Bootstrap $bootstrap)
     $pluginloader = $bootstrap->getPluginLoader();
     $pluginloader->addPrefixPath('Chof_Resource', dirname(__FILE__).'/resources');
     
+    
     return $chof_autoloader;
 
     
