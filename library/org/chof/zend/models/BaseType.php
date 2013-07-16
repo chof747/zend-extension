@@ -36,10 +36,42 @@ class Chof_Model_BaseType
 
     foreach ($options as $key => $value) 
     {
-      if (in_array($key, $vars)) 
+      if (in_array($key, $vars))
+      {
         $this->$key = $value;
+      }
     }
     return $this;
+  }
+  
+  public function __toString()
+  #****************************************************************************
+  {
+    return self::stringify($this);
+  }
+  
+  public function toArray()
+  #****************************************************************************
+  {
+    $representation = array();
+    foreach(get_object_vars($this) as $key => $value)
+    {
+      $representation[$key]= $value;
+    }
+    
+    return $representation;
+  }
+  
+  public static function stringify($obj)
+  #****************************************************************************
+  {
+    $representation = "";
+    foreach(get_object_vars($obj) as $key => $value)
+    {
+     $representation .= "<$key>$value</$key>";
+    }
+    
+    return $representation;
   }
   
   

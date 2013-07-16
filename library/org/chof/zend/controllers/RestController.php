@@ -496,6 +496,17 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
       throw new WrongResultFormat();
     }
   }  
+  
+    public function headAction()
+    {
+        $this->getResponse()->setBody(null);
+    }
+
+    public function optionsAction()
+    {
+        $this->getResponse()->setBody(null);
+        $this->getResponse()->setHeader('Allow', 'OPTIONS, HEAD, INDEX, GET, POST, PUT, DELETE');
+    }  
 }
 
 class WrongResultType extends Zend_Exception { }

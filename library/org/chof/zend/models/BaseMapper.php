@@ -117,6 +117,10 @@ abstract class Chof_Model_BaseMapper
       return false;    
   }
   
+  /**
+   * SQL Injection is prevented by the Zend_Db_Table_Abstract find method 
+   * @param unknown_type $id
+   */
   private function queryTableById($id)
   //****************************************************************************
   {
@@ -309,6 +313,11 @@ abstract class Chof_Model_BaseMapper
     return $this;
   }
 
+  /**
+   * @return Chof_Model_DbTable_BaseTable
+   * 
+   * @throws Exception
+   */
   public function getDbTable()
   //****************************************************************************
   {

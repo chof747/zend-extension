@@ -23,11 +23,7 @@ class Chof_View_Helper_ControlledDojo extends Zend_Dojo_View_Helper_Dojo
       else
       {
         $this->basens = $basenamespace;
-      }
-      
-      //$this->dojo()->requireModule("dijit.dijit");
-      //$this->dojo()->requireModule("dijit.dijit-all");
-      //$this->dojo()->requireModule("dojox.gfx");
+      }      
     }
     return $this;
   }

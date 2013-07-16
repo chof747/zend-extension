@@ -14,10 +14,13 @@ class TalendJob implements Zend_Acl_Resource_Interface
 
 class Chof_Util_TalendJob
 {
+  private static $LOGPREFIX = '[TalendJob]';
+  
   private $jobRoot = "";
   private $jobFileExtension = "sh";
   
   private $jobs = null;
+  private $log  = null;
   
   private $OUTPUT_TOKENS = array('output', 'input', 'problems', 'message');
   
@@ -40,6 +43,11 @@ class Chof_Util_TalendJob
     else
     {
       throw new Zend_Exception("No job root directory for Talend ETL jobs provided!");
+    }
+    
+    if ($log = Zend_Registry::get('logger'))
+    {
+      $this->log = $log;
     }
 
     $this->jobs = array();
@@ -113,19 +121,24 @@ class Chof_Util_TalendJob
       $output = array();
       $ret = 0;
       
-      exec("\"".
+      $call = "\"".
            $this->jobs[$jobname]->jobURL.
            "\" ".
-           $this->parseParams($params).
-           " 2>&1", $output, $ret);
+           $this->parseParams($params);
+                 
+      $this->logInfo("Call to $jobname: $call");
+      
+      exec("$call 2>&1", $output, $ret);
            
       if ($ret == 0)
       {
+        $this->logInfo("Call to $jobname returned OK");
         $output = $this->parseOutput($output);
         return $output;
       }
       else
       {
+        $this->logError("Call to $jobname returned with error: ".join("\n", $output));
         $output = $this->parseOutput($output, true);
         $e = new ExcecutionFailure("Talend Job Execution for: $jobname failed!");
         $e->output = $output;
@@ -249,6 +262,23 @@ class Chof_Util_TalendJob
     {
       $this->jobFileExtension = $extension;
       $this->readJobsFromRoot();
+    }
+  }
+  
+  private function logInfo($text)
+  #*****************************************************************************
+  {
+    if ($this->log)
+    {
+      $this->log->info(self::$LOGPREFIX.' '.$text);
+    }
+  }
+  private function logError($text)
+  #*****************************************************************************
+  {
+    if ($this->log)
+    {
+      $this->log->err(self::$LOGPREFIX.' '.$text);
     }
   }
 }
