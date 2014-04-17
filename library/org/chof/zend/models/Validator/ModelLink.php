@@ -32,7 +32,8 @@ class Chof_Model_Validator_ModelLink extends Zend_Validate_Abstract
  public function isValid($value)
   #****************************************************************************
   {
-    if ((($value == 0) || ($value === null) || ($value == ''))  && ($this->required))
+    //if ((($value == 0) || ($value === null) || ($value == ''))  && ($this->required))
+    if (empty($value) && ($this->required))
     {
       $this->_error(self::MSG_REQUIRED);
       return false;

@@ -19,6 +19,12 @@ class Chof_Controller_Helper_CheckAuth extends Zend_Controller_Action_Helper_Abs
             'password' => $password
           );
           break;
+        case 'ApiKey' :
+          $credentials = base64_decode($credentials);
+          return array(
+          	'login' => "",
+            'password' => $credentials
+          );
       }
     }
     return false;

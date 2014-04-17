@@ -95,9 +95,8 @@ abstract class Chof_Model_BaseMapper
     else
     {
       $found = $this->queryTableById($id);
-      
       if (count($found) == 0)
-        $this->insertData($data);        
+        $this->insertData($data);
       else
         $this->getDbTable()->update($data, $this->getPrimarySearchString($id));
     }

@@ -60,7 +60,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
    * @param Chof_Model_BaseModel $model
    * @param unknown_type $format
    */
-  private function makeMessageModel(Chof_Model_BaseModel $model, $format = false)
+  protected function makeMessageModel(Chof_Model_BaseModel $model, $format = false)
   #*****************************************************************************
   {
     $format = ($format) ? $format: $this->format;
@@ -123,6 +123,11 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   	return $keystring;
   }
   
+  protected function modifyPostedData($data)
+  {
+    return $data;
+  }
+  
   protected function isAllowed($item, $action)
   #*****************************************************************************
   {
@@ -178,6 +183,18 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   }
   
   /**
+   * Function determining if the put action can also create items if they are 
+   * missing - i.e. if we do not have an autoId
+   * 
+   * @return boolean
+   */
+  protected function createInPut()
+  #*****************************************************************************
+  {
+    return false;
+  } 
+  
+  /**
    * Must be implemented by the subclasses to retrieve a valid schema of the 
    * provided data
    */
@@ -192,10 +209,11 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     $new = ($item === null);
     $data = $this->_helper->params();
     $item = $new ? $this->model : $item;
-    
+
     
     try
     {
+      $data = $this->modifyPostedData($data);
       $item->decompose($data);
       
       if ($this->isAllowed($item, $new ? 'add' : 'write'))
@@ -300,13 +318,19 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     {
       try 
       {
-        $this->model->retrieveFromRequest($this->getRequest());
-        $this->save($this->model);
+        $this->save($this->getItem());
       }
       catch (Chof_Util_ItemNotFoundException $e)
       {
-        $this->getResponse()->appendBody("Item not found")
-                            ->setHttpResponseCode(404);  
+        if ($this->createInPut())
+        {
+          $this->postAction();
+        }
+        else
+        {
+          $this->getResponse()->appendBody("Item not found")
+                              ->setHttpResponseCode(404);  
+        }
       }
     }
   }

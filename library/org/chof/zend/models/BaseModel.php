@@ -95,6 +95,22 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
     return array($id);
   }
   
+  protected function getReference($id, $class)
+  #*****************************************************************************
+  {
+    if (!empty($id))
+    {
+      $ref = new $class();
+      $ref->retrieveFromID($id);
+  
+      return $ref;
+    }
+    else
+    {
+      return null;
+    }
+  }
+  
   /**
    * Primary key setup
    */

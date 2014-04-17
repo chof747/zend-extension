@@ -103,7 +103,7 @@ class Chof_Model_Decorator_Message_Json extends Chof_Model_Decorator_Message_Abs
             
             $ref = str_replace('{'.$link['rel'].'}', "", str_replace('\\', '', $link['href']));
             
-            if (is_numeric($linkdata))
+            if ((is_numeric($linkdata)) || (is_string($linkdata)))
             {
             	$data[$attribute] = $linkdata;
             }
@@ -113,10 +113,10 @@ class Chof_Model_Decorator_Message_Json extends Chof_Model_Decorator_Message_Abs
 	                                ((isset($linkdata['$ref'])) 
 	                                  ? str_replace($ref, "", $linkdata['$ref']) 
 	                                  : null);
-	            $data[$attribute] = (($data[$attribute] == '') || 
-	                                ($data[$attribute] == 0)) 
+
+	            $data[$attribute] = (empty($data[$attribute])) 
 	                                  ? null 
-	                                  : $data[$attribute];            	
+	                                  : $data[$attribute];  
             }
             else
             {
