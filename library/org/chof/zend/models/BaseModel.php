@@ -336,14 +336,24 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
         (($prefix == 'set') && (count($arguments)==1)))
     {
       $property = lcfirst(substr($name, 3));
+      $isdate = ((substr($property, 0, 4) == 'date') || 
+                 (substr($property, 4) == 'Date'));
+      
       if (property_exists($this,$property))
       {
         if ($prefix == 'get')
         {
-          if ($this->$property instanceof DateTime)
+          if (($isdate) || ($this->$property instanceof DateTime))
           {
-            $format = (isset($arguments[0])) ? $arguments[0] : 'datetime';
-            return Chof_Util_TimeUtils::returnTime($format, $this->$property);
+            if (!empty($this->$property))
+            {
+              $format = (isset($arguments[0])) ? $arguments[0] : 'datetime';
+              return Chof_Util_TimeUtils::returnTime($format, $this->$property);
+            }
+            else
+            {
+              return null;
+            }
           }
           else
           {
@@ -352,11 +362,12 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
         }
         else
         {
-          if ($this->$property instanceof DateTime)
+          if (($isdate) || ($this->$property instanceof DateTime))
           {
             //use utility function in case of datetime property
-            $this->$property = 
-              Chof_Util_TimeUtils::returnTime('datetime', $arguments[0]);
+            $this->$property = (!empty($arguments[0])) 
+              ? Chof_Util_TimeUtils::returnTime('datetime', $arguments[0])
+              : null;
           }
           else
           {
