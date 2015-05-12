@@ -74,11 +74,22 @@ class Chof_View_Helper_Gapi extends Chof_View_Helper_BaseHelper
       $loads = array();
       foreach ($this->apis as $api => $version)
       {
-        $loads[] = "  google.load(\"$api\", \"$version\", {other_params: \"sensor=false\"});";
+      	if ($api == 'maps')
+      	{
+      		$this->view->headScript()
+      		  ->prependFile("http://maps.googleapis.com/maps/api/js?key=$this->gapikey");
+      	}
+      	else
+      	{		
+          $loads[] = "  google.load(\"$api\", \"$version\", {other_params: \"sensor=false\"});";
+      	}
       }
       
-      $this->view->headScript()->prependScript($this->output($loads));
-      $this->view->headScript()->prependFile("http://www.google.com/jsapi?key=$this->gapikey");
+      if (count($loads)>0)
+      {
+        $this->view->headScript()->prependScript($this->output($loads));
+        $this->view->headScript()->prependFile("http://www.google.com/jsapi?key=$this->gapikey");
+      }
     }
     
     return $this;

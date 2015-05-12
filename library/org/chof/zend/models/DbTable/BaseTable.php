@@ -38,6 +38,28 @@ class Chof_Model_DbTable_BaseTable extends Zend_Db_Table_Abstract
         return $this->_db->delete($tableSpec, $where);
   }
   
+  public function insert(array $data)
+  //****************************************************************************
+  {
+    $oldname = $this->_name;
+    $this->_name = (property_exists($this, 'updateName')) ? $this->updateName : $this->_name;
+    $result = parent::insert($data);
+    $this->_name = $oldname;
+    
+    return $result;
+  }
+  
+  public function update(array $data, $where)
+  //****************************************************************************
+  {
+    $oldname = $this->_name;
+    $this->_name = (property_exists($this, 'updateName')) ? $this->updateName : $this->_name;
+    $result = parent::update($data, $where);
+    $this->_name = $oldname;
+    
+    return $result;
+  }
+  
   public function hasAutomatedSequence()
   //****************************************************************************
   {

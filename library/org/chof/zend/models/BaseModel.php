@@ -292,7 +292,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
     {
       $select->where($filter);
     }
-    
+        
     return $this->getMapper()->fetchAll($select);
   }
 
@@ -383,12 +383,12 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
       }
       else
       {
-        throw new Exception("Invalid property specified $property");
+        throw new Exception("Invalid set property specified $property");
       }
     }
     else
     {
-      throw new Exception("Invalid method specified $name");
+      throw new Exception("Invalid method name specified $name");
     }
     
   }
@@ -500,6 +500,16 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   #****************************************************************************
   {
     return $this->getMapper()->getCount($filter);
-  }  
+  }
+
+  /**
+   * Retrieves a reference to itself. Overwritten by decorators
+   * @return Chof_Model_BaseModel
+   */
+  public function getModel()
+  #****************************************************************************
+  {
+    return $this;  
+  }
 }
 ?>

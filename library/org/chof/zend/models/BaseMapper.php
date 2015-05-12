@@ -233,7 +233,7 @@ abstract class Chof_Model_BaseMapper
     foreach ($fetchparams as $param => $value)
     {
       //echo "\n- DEBUG -\n";
-      //echo " $param : $value\n";
+      //echo " $param : ".var_export($value,true)."\n";
       //echo "- DEBUG -\n";
       
       $param = strtolower($param);

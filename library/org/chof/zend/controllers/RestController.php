@@ -26,10 +26,13 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   
   /**
    * This is the method that has to be implemented by a concrete REST Controller
-   * In this method you should at lest set the
+   * In this method you should at laest set the
    * 
    * $this->model parameter by creating and assigning to it a new instance of your
    * concrete BaseModel.
+   *
+   * Note: You should only call methods and execute commands which can be called
+   * whenever a new model is needed in the process of the controller
    */
   abstract protected function initModelService();
   
@@ -208,40 +211,74 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   {
     $new = ($item === null);
     $data = $this->_helper->params();
-    $item = $new ? $this->model : $item;
-
-    
+    $result = array();
+       
     try
-    {
-      $data = $this->modifyPostedData($data);
-      $item->decompose($data);
-      
-      if ($this->isAllowed($item, $new ? 'add' : 'write'))
+    {      
+      if (is_array($data))
       {
-        $item->save();
+        $x = self::is_assoc($data);
+        if((!$new) || ($x))
+        {
+          $item = $new ? $this->model : $item;
+          $result = array($this->saveItem($item, $new, $data));
+        }
+        else
+        {
+          foreach($data as $entry)
+          {
+            $this->initModelService();
+            $this->model = $this->makeMessageModel($this->decorateModel($this->model));
+            $result[] = $this->saveItem($this->model, $new, $entry);
+          }        
+        }
         $this->composeOutput("", $new ? 201 : 200);
-        return true;
+        return $result;
+        
       }
       else
       {
         return false;
       }
     }
+    
     catch (Chof_Model_ValidationException $e)
-    {    
+    {
       $this->getResponse()->appendBody(Zend_Json::encode(
-                                       $e->getDetails()))
-                        ->setHTTPResponseCode(400);
+          $e->getDetails()))
+          ->setHTTPResponseCode(400);
     }
     catch (Zend_Exception $e)
     {
       $this->getResponse()->appendBody("Item could note be saved. $e")
-                          ->setHttpResponseCode(500);       
+      ->setHttpResponseCode(500);
     }
     
     return false;
   }
-  
+
+  private function saveItem($item, $new, $data)
+  #*****************************************************************************
+  {
+    $data = $this->modifyPostedData($data);
+    $item->decompose($data);
+    
+    if ($this->isAllowed($item, $new ? 'add' : 'write'))
+    {
+      if ($this->beforeSave($item, $new))
+      {
+        $item->save();
+        $this->afterSave($item, $new);
+        return $item->getId();
+      }
+      else 
+        return false;
+    }
+    else
+    {
+      return false;
+    }
+  }
   
   protected function getIndex($range, $order, $listFilter)
   #*****************************************************************************
@@ -318,7 +355,18 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     {
       try 
       {
-        $this->save($this->getItem());
+        $result = $this->save($this->getItem());
+        
+        if (count($result) == 1)
+        {
+          if (!$result[0])
+          {
+            $this->getResponse()->appendBody("Not allowed to update item with ID".
+                $this->echoKey($this->getItem()->getPrimary()))
+                ->setHttpResponseCode(401);
+            
+          }
+        }
       }
       catch (Chof_Util_ItemNotFoundException $e)
       {
@@ -359,13 +407,17 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
   public function postAction()
   #*****************************************************************************
   {
-    if ($this->save())
+    if ($results = $this->save())
     {
-      $this->getResponse()->setHeader('Location',
-        $this->view->url(array(
-        'module'     => $this->getRequest()->getModuleName(),
-        'controller' => $this->getRequest()->getControllerName(),
-        'id'         => $this->model->getId()), 'rest', true));
+      $ids = array();
+      foreach($results as $id)
+      {
+        $ids[] = $this->view->url(array(
+            'module'     => $this->getRequest()->getModuleName(),
+            'controller' => $this->getRequest()->getControllerName(),
+            'id'         => $id), 'rest', true);
+      }
+      $this->getResponse()->setHeader('Location', join(',',$ids));
     }    
   }
   
@@ -379,8 +431,24 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
         $item = $this->model->retrieveFromRequest($this->getRequest());
         if ($this->isAllowed($item, 'delete'))
         {
-          $item->delete();
-          $this->composeOutput("", 204);
+          if ($this->beforeDelete($item))
+          {
+            $id = $item->getPrimary();
+            $item->delete();
+            
+            //perform call of after delete with the key still set
+            $item->setPrimary($id);
+            $this->afterDelete($item);
+            $item->setPrimary(null);
+            
+            $this->composeOutput("", 204);
+          }
+          else
+          {
+            $this->getResponse()
+              ->appendBody("Delete action was aborted by delegated controller")
+              ->setHttpResponseCode(406);  
+          }
         }
       }
       catch (Chof_Util_ItemNotFoundException $e)
@@ -423,7 +491,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
         
         if ('' != $filter = $this->getListFilter())
           $select->where($filter);
-
+        
         $stmt = $select->query();
         $resultSet = $stmt->fetchAll();
         
@@ -465,7 +533,6 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
         {
           $this->getResponse()->setHeader($header, $content);
         }
-        
         $this->getResponse()->appendBody(
           (is_string($data)) ? ($htmlEncode) ? htmlentities($data) : $data 
                              : $this->formatOutput($data));
@@ -512,7 +579,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
       throw new WrongResultType();
 
     try
-    {
+    { 
       return $this->model->encode($a);
     }      
     catch (Exception $e)
@@ -521,16 +588,71 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     }
   }  
   
-    public function headAction()
-    {
-        $this->getResponse()->setBody(null);
-    }
+  public function headAction()
+  #*****************************************************************************
+  {
+      $this->getResponse()->setBody(null);
+  }
 
-    public function optionsAction()
-    {
-        $this->getResponse()->setBody(null);
-        $this->getResponse()->setHeader('Allow', 'OPTIONS, HEAD, INDEX, GET, POST, PUT, DELETE');
-    }  
+  public function optionsAction()
+  #*****************************************************************************
+  {
+      $this->getResponse()->setBody(null);
+      $this->getResponse()->setHeader('Allow', 'OPTIONS, HEAD, INDEX, GET, POST, PUT, DELETE');
+  }
+
+  private static function is_assoc(array $a)
+  #*****************************************************************************
+  {
+    $keys = array_keys($a);
+    return ($keys !== array_keys($keys));
+  }
+  
+  /**
+   * Extension hook which is triggered before an item is saved
+   * 
+   * @param Chof_Model_BaseModel $model
+   * @param unknown $new
+   * @returen boolean, true if it should be continued, false otherwise
+   */
+  protected function beforeSave(Chof_Model_BaseModel $model, $new)
+  #*****************************************************************************
+  {  
+    return true;
+  }
+  
+  /**
+   * Extension hook which is triggered after an item is saved
+   * 
+   * @param Chof_Model_BaseModel $model
+   * @param unknown $new
+   */
+  protected function afterSave(Chof_Model_BaseModel $model, $new)
+  #*****************************************************************************
+  {  
+  }
+  
+  /**
+   * Extension hook triggered before model has been deleted
+   * 
+   * @param Chof_Model_BaseModel $model
+   * @return boolean true if it should be continued, false otherwise
+   */
+  protected function beforeDelete(Chof_Model_BaseModel $model)
+  #*****************************************************************************
+  {
+    return true;
+  }
+  
+  /**
+   * Extension hook which is triggered after an item is saved
+   * 
+   * @param Chof_Model_BaseModel $model
+   */
+  protected function afterDelete(Chof_Model_BaseModel $model)
+  {
+    
+  }
 }
 
 class WrongResultType extends Zend_Exception { }

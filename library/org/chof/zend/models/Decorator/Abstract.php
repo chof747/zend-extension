@@ -12,6 +12,7 @@
 abstract class Chof_Model_Decorator_Abstract extends Chof_Model_BaseModel
 {
   protected $model = null;
+  protected $decorators = array();
   
   function __construct($model)
   #*****************************************************************************
@@ -22,6 +23,32 @@ abstract class Chof_Model_Decorator_Abstract extends Chof_Model_BaseModel
     }
     
     $this->model = $model;
+    
+    if ($model instanceof Chof_Model_Decorator_Abstract)
+    {
+      $this->decorators = $this->model->decorators;
+    }
+    
+    $this->decorators[] = get_class($this);
+  }
+  
+  public function getDecorators()
+  #*****************************************************************************
+  {
+    return $this->decorators;
+  }
+  
+  public function getModel()
+  #*****************************************************************************
+  {
+    if ($this->model instanceof Chof_Model_Decorator_Abstract)
+    {
+      return $this->model->getModel();
+    }   
+    else
+    {
+      return $this->model;
+    }
   }
   
   function __call($name, $arguments)

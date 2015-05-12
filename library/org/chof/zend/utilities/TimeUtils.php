@@ -1,9 +1,26 @@
 <?php
 
+function threeAlternatives($pcn, $date, $prev,$current,$next)
+#*******************************************************************************
+{
+  if ($pcn > 0)
+  {
+    return $date->add(new DateInterval($next));
+  }
+  else if ($pcn == 0)
+  {
+    return $date->sub(new DateInterval($current));
+  }
+  else
+  {
+    return $date->sub(new DateInterval($prev));
+  }
+}
+
 class Chof_Util_TimeUtils 
 {
-	
-	public static function transformTime($newFormat, $time)
+  
+  public static function transformTime($newFormat, $time)
   //****************************************************************************
 	{
 		$dtime  = self::returnTime('datetime', $time);
@@ -70,6 +87,62 @@ class Chof_Util_TimeUtils
   		case 'D' : return 'P1D';
   		default:   return 'P1M';
   	}
+  }
+  
+  private static function periodBegin(DateTime $date, $period, $pcn = -1)
+  {
+    $date->setTime(0, 0, 0);
+    $year = $date->format('Y');
+    $month = $date->format('m');
+    
+    switch ($period)
+    {
+    	case 'D' : 
+    	  return threeAlternatives($pcn, $date, 'P1D', 'P0D', 'P1D');
+    	case 'W' : 
+    	  $wd = ($date->format('w') + 6) % 7;
+    	  return threeAlternatives($pcn, $date, 'P'.($wd+7).'D',
+    	                                        'P'.($wd).'D',
+    	                                        'P'.(7-$wd).'D');
+    	                                        
+    	case 'Y' : 
+    	  $date->setDate($year, 1, 1);
+    	  return threeAlternatives($pcn, $date, 'P1Y', 'P0Y', 'P1Y');
+    	case 'H' :  
+    	  $hm = floor($month/6) * 6 + 1;
+    	  $date->setDate($year, $hm, 1);
+    	  return threeAlternatives($pcn, $date, 'P6M', 'P0M', 'P6M');
+    	   
+    	case 'Q' : 
+    	  $qm = floor($month/3) * 3 + 1;
+    	  $date->setDate($year, $qm, 1);
+    	  return threeAlternatives($pcn, $date, 'P3M', 'P0M', 'P3M');
+    	
+    	default:  
+    	  $date->setDate($year, $month, 1);
+    	  return threeAlternatives($pcn, $date, 'P1M', 'P0M', 'P1M');
+    	   
+    }
+    
+  }
+  
+  /**
+   * Returns the start and end date of a specific period in time
+   * 
+   * 
+   * @param DateTime $date
+   * @param string $period
+   * @param integer $pcn
+   */
+  public static function fullPeriod($date, $period, $pcn = -1)
+  //****************************************************************************
+  {
+    $begin = self::periodBegin($date, $period, $pcn);
+    $end = clone $begin;
+    $end->add(new DateInterval(self::makePeriod($period)));
+    $end->sub(new DateInterval('P1D'));
+    
+    return array($begin, $end);
   }
   
   public static function printPeriodsByTemplate($template)
