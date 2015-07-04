@@ -19,6 +19,14 @@ function threeAlternatives($pcn, $date, $prev,$current,$next)
 
 class Chof_Util_TimeUtils 
 {
+  public static function today()
+  //****************************************************************************
+  {
+    $today = new DateTime();
+    $today->setTime(0,0,0);
+    
+    return $today;
+  }
   
   public static function transformTime($newFormat, $time)
   //****************************************************************************
@@ -64,7 +72,7 @@ class Chof_Util_TimeUtils
         //format for file timestamps
         case  'file' : $format = 'YmdHis'; break;
         
-        //special printing formats
+        //specialing formats
         case 'date-long'       : $format = 'l, d.M.Y'; break;
         case 'date-short'      : $format = 'd.M.Y'; break;
         case 'datetime-long'   : $format = 'l, d.M.Y H:i:s e'; break;
@@ -91,6 +99,7 @@ class Chof_Util_TimeUtils
   
   private static function periodBegin(DateTime $date, $period, $pcn = -1)
   {
+    $date = clone $date;
     $date->setTime(0, 0, 0);
     $year = $date->format('Y');
     $month = $date->format('m');
@@ -109,12 +118,12 @@ class Chof_Util_TimeUtils
     	  $date->setDate($year, 1, 1);
     	  return threeAlternatives($pcn, $date, 'P1Y', 'P0Y', 'P1Y');
     	case 'H' :  
-    	  $hm = floor($month/6) * 6 + 1;
+    	  $hm = floor(($month-1)/6) * 6 + 1;
     	  $date->setDate($year, $hm, 1);
     	  return threeAlternatives($pcn, $date, 'P6M', 'P0M', 'P6M');
     	   
     	case 'Q' : 
-    	  $qm = floor($month/3) * 3 + 1;
+    	  $qm = floor(($month-1)/3) * 3 + 1;
     	  $date->setDate($year, $qm, 1);
     	  return threeAlternatives($pcn, $date, 'P3M', 'P0M', 'P3M');
     	

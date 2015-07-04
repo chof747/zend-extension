@@ -70,7 +70,6 @@ class Chof_Controller_Helper_CheckAuth extends Zend_Controller_Action_Helper_Abs
     else if ($online)
     {
       $request = $this->getRequest();
-      
       $rerequest = $this->getActionController()->getHelper('reRequest');
       $rerequest->direct($request);
       
