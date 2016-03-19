@@ -252,7 +252,7 @@ abstract class Chof_Model_BaseMapper
       }
     }
     
-    //echo $select->__toString();
+    //ZLOG($select->__toString());
 
     return $this->fetchAll($select);
   }
