@@ -3,6 +3,7 @@
 {
 	private $errors = array();
 	protected $regexp = '';
+	private $mysql = false;
 	
   public function errorHandler($errno, $errstr, $errfile, $errline)
   //**************************************************************************** 
@@ -31,14 +32,23 @@
   	return $regexp;
   }
   
+  public static function makeMySQLConform($regexp)
+  //**************************************************************************** 
+  {
+    return //preg_replace('/\.\*\?(.)/', '[^${1}]*${1}', $regexp);
+           preg_replace('/\.\*\?/', '.*', $regexp);
+  }
+  
   /**
    * Constructs a syntax checked regular expression.
    * 
    * @param string $regexp the regular expression without delimiters
+   * @param bool $mysql set this regexp as a mysql regexp
    */
-  function __construct($regexp)
+  function __construct($regexp, $mysql = false)
   //**************************************************************************** 
   {
+    $this->mysql = $mysql;
     $this->setRegExp($regexp);
   }
   
@@ -56,6 +66,11 @@
   //**************************************************************************** 
   {
     $regexp = self::expandClasses($regexp);
+    if ($this->mysql)
+    {
+      $regexp = self::makeMySQLConform($regexp);
+    }
+ 
 		$this->errors = array();
 	  $errorfunction = set_error_handler(array($this, 'errorHandler'));
 	  preg_match("/$regexp/", 'mary had a little lamb');
