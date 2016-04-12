@@ -5,6 +5,8 @@
 	protected $regexp = '';
 	private $mysql = false;
 	
+	public static $REGEXP_DELIMITER = '/';
+	
   public function errorHandler($errno, $errstr, $errfile, $errline)
   //**************************************************************************** 
   {
@@ -20,6 +22,21 @@
     '\s' => '[[:blank:]]',
     '\w' => '[[:alnum:]]'
   );
+  
+  public static function makeSimilarityRegexp($reference, array $samples)
+  //**************************************************************************** 
+  {
+    $common = Chof_Util_String::computeCommonStringParts($reference, $samples, '|');
+    return self::transformSegmentsToRegexp($common, '|');
+  }
+  
+  public static function transformSegmentsToRegexp($segmentedstring, $delimiter)
+  //**************************************************************************** 
+  {
+    return join('.*', array_map(function($token) {
+      return preg_quote($token, self::$REGEXP_DELIMITER);
+    }, explode($delimiter, $segmentedstring)));
+  }
   
   public static function expandClasses($regexp)
   //**************************************************************************** 

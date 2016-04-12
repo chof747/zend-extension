@@ -70,6 +70,39 @@ class Chof_Util_String
     return array('values' => $diffValues, 'mask' => $diffMask);
   }
   
+  public static function computeCommonStringParts($reference, $samples, 
+    $delimiter = '|')
+  #****************************************************************************
+  {
+    $common = $reference;
+    
+    foreach($samples as $s)
+    {
+      $diff = self::computeDiff($common, $s);
+      $equal = '';
+      $ndiff = 0;
+      for($i=0;$i<count($diff['values']);$i++)
+      {
+        if ($diff['mask'][$i] == 0)
+        {
+          $equal .=  $diff['values'][$i];
+          $ndiff = 0;
+        }
+        else
+        {
+          $equal .= ($ndiff == 0) ? $delimiter : '';
+          $ndiff++;
+        }
+      }
+      $common = preg_replace("/\$delimiter\s/", "", $equal);
+      ZLOG($equal);
+      ZLOG($common);
+      ZLOG('....');
+    }
+    
+    return $common;
+  }
+  
 }
 
 ?>
