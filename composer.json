@@ -1,0 +1,6 @@
+{
+  "name":"org/chof/zend-extension",
+  "require":{
+    "zendframework/zendframework1":"1.12.*"
+  },
+}
