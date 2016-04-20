@@ -95,9 +95,6 @@ class Chof_Util_String
         }
       }
       $common = preg_replace("/\$delimiter\s/", "", $equal);
-      ZLOG($equal);
-      ZLOG($common);
-      ZLOG('....');
     }
     
     return $common;
