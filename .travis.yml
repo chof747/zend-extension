@@ -9,3 +9,5 @@ script:
   - phpunit --bootstrap=tests/backend/bootstrap.php --log-junit=tests/logs/test-result.xml --report-useless-tests tests/
 services:
   - mysql
+notifications:
+  email : false
