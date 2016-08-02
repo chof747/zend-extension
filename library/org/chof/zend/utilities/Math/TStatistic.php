@@ -69,14 +69,21 @@ class Chof_Util_Math_TStatistic
       
       $outlier = array();
       
-      $G = abs($probe - $avg) / $sigma;
-      if ($G > self::gcrit($n, $confidence))
+      if ($sigma != 0)
       {
-        $outlier[$key] = $probe;
+        $G = abs($probe - $avg) / $sigma;
+        if ($G > self::gcrit($n, $confidence))
+        {
+          $outlier[$key] = $probe;
+        }
+        else
+        {
+          $sample[$key] =  $probe;
+        }
       }
       else
       {
-        $sample[$key] =  $probe;
+        $outlier[$key] = $probe;
       }
     }
     
