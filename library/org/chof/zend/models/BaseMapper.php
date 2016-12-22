@@ -24,13 +24,13 @@ abstract class Chof_Model_BaseMapper
     {
       $primary_search = array();
       foreach($tablePrimKey as $pk)
-      $primary_search[] = "$pk = ?";
+      $primary_search[] = "`$pk` = ?";
       
       $id = (is_array($id)) ? $id : array($id);
       return array_combine($primary_search, $id);
     }
     else
-      return array("$tablePrimKey = ?" => $id);
+      return array("`$tablePrimKey` = ?" => $id);
 
   }
   
