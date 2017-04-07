@@ -28,6 +28,20 @@ class Chof_Util_TimeUtils
     return $today;
   }
   
+  public static function compareTime(DateTime $a, DateTime $b)
+  //****************************************************************************
+  {
+    if ($a->getTimeStamp() > $b->getTimeStamp()) {
+      return -1;
+    }
+    elseif ($a->getTimeStamp() < $b->getTimeStamp()) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+  
   public static function transformTime($newFormat, $time)
   //****************************************************************************
 	{
