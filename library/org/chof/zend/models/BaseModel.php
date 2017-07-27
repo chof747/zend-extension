@@ -193,13 +193,13 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
     }
     else
     {
-      $id = $this->getPrimaryFromId($id);
-      $model = call_user_func_array(array($this, "find"), $id);
+      $ids = $this->getPrimaryFromId($id);
+      $model = call_user_func_array(array($this, "find"), $ids);
     }
     
     if ($model === null)
     {
-      throw new Chof_Util_ItemNotFoundException($id, 'model');
+      throw new Chof_Util_ItemNotFoundException($id, $this->getModelName());
     } 
     else
     {
