@@ -8,6 +8,12 @@ class Chof_Util_Math
     return (array_sum($a) *1.0) / (count($a) * 1.0);
   }
   
+  public static function sign($n)
+  #*****************************************************************************
+  {
+    return ($n > 0) - ($n < 0);
+  }
+  
   public static function standardDev(array $a, $sample = false) 
   #*****************************************************************************
   {

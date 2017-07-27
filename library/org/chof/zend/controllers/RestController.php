@@ -470,28 +470,50 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
     $this->composeOutput($this->model->sendSchema($this->getSchema()), 200, false);
   }
   
-  public function filterlistAction()
+  private function prepareFilterlist($filtertag)
   #*****************************************************************************
-  { 
+  {
     $schema = $this->getSchema();
-    
+
     if ((isset($schema['label'])) && (isset($schema['identifier'])))
     {
       $id = $schema['identifier'];
-      $label = $schema['label'];  
+      $label = $schema['label'];
+      
+      $select = new Zend_Db_Select($this->model->getMapper()->getDbTable()->getAdapter());
+      $select->order($label);
+      if ('' != $filter = $this->getListFilter())
+        $select->where($filter);
+      
+      $select = $this->filterlistSelect($filtertag, $select, array(
+                         'identifier' => $id,
+                         'label'      => $label));
+      
+      return $select;
+    }
+  }
+  
+  protected function filterlistSelect($filtertag, $select, $columns)
+  //****************************************************************************
+  {
+    $select->from(
+      array($this->model->getMapper()->getDbTable()->getTableName()),
+      $columns);
     
-      try
+    return $select;
+  }
+
+  public function filterlistAction()
+  #*****************************************************************************
+  { 
+    try
+    {
+      $select = $this->prepareFilterlist(
+        $this->getRequest()->getParam('filterlist', 1));
+      
+      if ($select)
       {
-        $select = $this->model->getMapper()->getDbTable()->select();
-        $select->from(array($this->model->getMapper()->getDbTable()->getTableName()),
-                      array(
-                       'identifier' => $id,
-                       'label'      => $label))
-               ->order($label);
-        
-        if ('' != $filter = $this->getListFilter())
-          $select->where($filter);
-        
+      
         $stmt = $select->query();
         $resultSet = $stmt->fetchAll();
         
@@ -508,15 +530,13 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
         $data->setLabel('label');
         
         $this->getResponse()->appendBody($data->toJson())
-                            ->setHttpResponseCode(200);                
-          
+                            ->setHttpResponseCode(200);
       }
-      catch (Zend_Exception $e)
-      {
-        $this->getResponse()->appendBody($e->getMessage())
-                            ->setHttpResponseCode(500);                
-        
-      }
+    }
+    catch (Zend_Exception $e)
+    {
+      $this->getResponse()->appendBody($e->getMessage())
+                          ->setHttpResponseCode(500);                
       
     }
   }

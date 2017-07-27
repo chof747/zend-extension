@@ -19,6 +19,14 @@ function threeAlternatives($pcn, $date, $prev,$current,$next)
 
 class Chof_Util_TimeUtils 
 {
+  public static $MAP_INTERVAL_PERIOD = array(
+    'P3M' => 'Q',
+    'P1M' => 'M',
+    'P1Y' => 'Y',
+    'P1W' => 'W',
+    'P7D' => 'W'
+  );  
+  
   public static function today()
   //****************************************************************************
   {
