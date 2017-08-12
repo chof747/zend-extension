@@ -140,6 +140,15 @@ class TimeUtilsTest extends BaseTestCase
       $this->checkPeriods(new DateTime('2014-03-17'), $results);
   }
   
+  public function testReturnTimeDateTimeObject()
+  //****************************************************************************
+  {
+    $dt = Chof_Util_TimeUtils::returnTime('datetime', '2017-01-01');
+    $dt2 = Chof_Util_TimeUtils::returnTime('datetime', $dt);
+    $dt->add(new DateInterval('P1Y'));
+    $this->assertNotEquals($dt, $dt2);
+  }
+  
   public function checkPeriods($date, $periods)
   //****************************************************************************
   {

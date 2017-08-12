@@ -75,7 +75,14 @@ class Chof_Util_TimeUtils
     
     if ($format == 'datetime')
     {
-      return clone $time;
+      if ($time instanceof DateTime)
+      {
+        return clone $time;
+      }
+      else
+      {
+        return null;
+      }
     }
     elseif ($format == 'number')
     {
