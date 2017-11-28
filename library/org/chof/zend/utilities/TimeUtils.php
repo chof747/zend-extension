@@ -77,6 +77,7 @@ class Chof_Util_TimeUtils
     {
       if ($time instanceof DateTime)
       {
+        //clone to avoid issues when changing afterwards
         return clone $time;
       }
       else
