@@ -8,6 +8,8 @@
  */
 class Chof_Model_BaseType 
 {
+  public static $STRINGIFY_XMLLIKE = 0;
+  public static $STRINGIFY_JSON = 1;
   /**
    * Standard constructor for base types. 
    * 
@@ -62,18 +64,30 @@ class Chof_Model_BaseType
     return $representation;
   }
   
-  public static function stringify($obj)
+  public static function stringify($obj, $type = 0)
   #****************************************************************************
   {
     $representation = "";
-    foreach(get_object_vars($obj) as $key => $value)
+    
+    
+    switch ($type)
     {
-     $representation .= "<$key>$value</$key>";
+      case (self::$STRINGIFY_XMLLIKE) :
+      {
+        foreach(get_object_vars($obj) as $key => $value)
+        {
+         $representation .= "<$key>$value</$key>";
+        }
+        break;
+      }
+      case (self::$STRINGIFY_JSON) : 
+      {
+        $representation = Zend_Json::encode(get_object_vars($obj));
+        break;
+      }
     }
     
     return $representation;
   }
-  
-  
 }
 ?>
