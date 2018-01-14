@@ -2,7 +2,16 @@
 
 class Chof_Util_Log extends Zend_Log
 {
+  public function removeWriters()
+  //****************************************************************************
+  {
+    foreach($this->_writers as $writer) {
+      $writer->shutdown();
+    }
+  }
+  
 	public function exception(Exception $e)
+	//****************************************************************************
 	{
 		$className = get_class($e);
 		$code = $e->getCode();
