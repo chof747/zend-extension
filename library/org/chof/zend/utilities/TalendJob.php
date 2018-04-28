@@ -22,6 +22,12 @@ class Chof_Util_TalendJob
   private $jobs = null;
   private $log  = null;
   
+  private static $ERROR_EXCEPTION_MATRIX = array(
+    101 => array( 
+        'exception' => 'MaximumTimeExceededFailure',
+        'message'  => 'Execution of %s took too long!'
+  ));
+  
   private $OUTPUT_TOKENS = array('output', 'input', 'problems', 'message');
   
   public function __construct($root = "", $extension = "sh")
@@ -138,9 +144,17 @@ class Chof_Util_TalendJob
       }
       else
       {
-        $this->logError("Call to $jobname returned with error: ".join("\n", $output));
+        $exceptionClass = 'ExcecutionFailure';
+        $exceptionMessage = "Talend Job Execution for: $jobname failed!";
+        if (array_key_exists($ret, self::$ERROR_EXCEPTION_MATRIX))
+        {
+          $exceptionClass = self::$ERROR_EXCEPTION_MATRIX[$ret]['exception'];
+          $exceptionMessage = sprintf(
+            self::$ERROR_EXCEPTION_MATRIX[$ret]['message'], $jobname);
+        }
+        $this->logError($exceptionMessage.join("\n", $output));
         $output = $this->parseOutput($output, true);
-        $e = new ExcecutionFailure("Talend Job Execution for: $jobname failed!");
+        $e = new $exceptionClass($exceptionMessage);
         $e->output = $output;
         throw $e;
       }
@@ -286,6 +300,11 @@ class Chof_Util_TalendJob
 class ExcecutionFailure extends Zend_Exception
 {
   public $output;
+}
+
+class MaximumTimeExceededFailure extends ExcecutionFailure
+{
+  
 }
 
 
