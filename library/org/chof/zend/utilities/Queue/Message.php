@@ -68,6 +68,12 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
     
     return $this->adapter;
   }
+  
+  public function getTitle()
+  //****************************************************************************
+  {
+    return '';
+  }
 }
 
 ?>

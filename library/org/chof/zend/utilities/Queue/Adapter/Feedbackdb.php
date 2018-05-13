@@ -36,6 +36,7 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
     $status = $this->_statusTable->createRow();
     $status->message_id = $msg->message_id;
     $status->created = $msg->created;
+    $status->title = $msg->getTitle();
     
     try {
       $status->save();
@@ -82,7 +83,14 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
   {
     $this->changeStatus($message, function(&$status) {
       $status->closed = time();
-      $status->status = 'closed';
+      if (($status->complete != 100) || ($status === null)) 
+      {
+        $status->status = 'terminated';
+      }
+      else
+      {
+        $status->status = 'closed';
+      }
     });    
     return parent::deleteMessage($message);
   }
