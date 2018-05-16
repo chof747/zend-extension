@@ -15,9 +15,26 @@ class Chof_Resource_Messagequeue extends
 	 	     (!empty($options['name'])) &&
 	 	     (!empty($options['driverOptions'])) && (is_array($options['driverOptions'])))
 	 	 {
-	 	   $queue = new Zend_Queue ($options['adapter'], new Zend_Config(array(
+	 	   $queueOptions = array(
 	 	       'name' => $options['name'],
-	 	       'driverOptions' => $options['driverOptions'])));
+	 	       'driverOptions' => $options['driverOptions']);
+	 	   
+	 	   if (!empty($options['adapterNamespace']))
+	 	   {
+	 	     $queueOptions['adapterNamespace'] = $options['adapterNamespace'];
+	 	   }
+	 	   
+	 	   $queue = new Zend_Queue ($options['adapter'], new Zend_Config($queueOptions));
+	 	   
+	 	   if(!empty($options['messageClass']))
+	 	   {
+	 	     $queue->setMessageClass($options['messageClass']);
+	 	   }
+
+	 	 	 if(!empty($options['messageClassSet']))
+	 	   {
+	 	     $queue->setMessageClassSet($options['messageClassSet']);
+	 	   }
 
 	 	   return $queue;
 	 	 }
