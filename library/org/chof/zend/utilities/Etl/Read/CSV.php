@@ -1,6 +1,6 @@
 <?php
 
-class Chof_Util_Etl_ReadCSV
+class Chof_Util_Etl_Read_CSV extends Chof_Util_Etl_Read
 {
   
   private static $DELIMITERS = array(',', ';', '|', '\t');
@@ -125,13 +125,4 @@ class Chof_Util_Etl_ReadCSV
   }
 }
 
-class Chof_Util_Etl_FileOpenError extends Zend_Exception
-{
-  
-}
-
-class Chof_Util_Etl_FileReadError extends Zend_Exception
-{
-  
-}
 ?>

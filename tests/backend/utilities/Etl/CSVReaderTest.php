@@ -15,10 +15,17 @@ class CSVReaderTest extends BaseTestCase
   //****************************************************************************
   {
     $csvfile = dirname(__FILE__)."/../../../files/etl/csvreader/$file";
-    $data = Chof_Util_Etl_ReadCSV::read($csvfile,1);
+    $data = Chof_Util_Etl_Read_CSV::read($csvfile,1);
     $this->assertArrayEquals($expected, $data);  
   }
   
+  private function comparecsvExt($expected, $file, $headers, $delimiter, $enclosure)
+  //****************************************************************************
+  {
+    $csvfile = dirname(__FILE__)."/../../../files/etl/csvreader/$file";
+    $data = Chof_Util_Etl_Read_CSV::read($csvfile,$headers, $delimiter, $enclosure);
+    $this->assertArrayEquals($expected, $data);  
+  }
   public function testSimpleCSV()
   //****************************************************************************
   {
@@ -56,6 +63,21 @@ class CSVReaderTest extends BaseTestCase
          "Datum"     => '11.05.2018'
        )
     ), 'enclosuretest.csv');
+  }
+  
+  public function testNoheader()
+  {
+    $this->comparecsvExt(array(
+        array(
+            0 => 10,
+            1 => 20,
+            2 => 'Peter'
+        ),
+        array(
+            0 =>  30,0,
+            1 => -40,
+            2 => 'Paul'
+        )), 'noheadertest.csv',0, ',', '"');
   }
 }
 ?>

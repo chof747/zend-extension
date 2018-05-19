@@ -46,7 +46,15 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
       }
       else
       {
-        $this->assertEquals($value, $actual[$key]);
+        if ($actual[$key] instanceof DateTime)
+        {
+          $this->assertEquals($value,
+            Chof_Util_TimeUtils::returnTime('mysql-date', $actual[$key]));
+        }
+        else
+        {
+          $this->assertEquals($value, $actual[$key]);
+        }
       }
     }
   }

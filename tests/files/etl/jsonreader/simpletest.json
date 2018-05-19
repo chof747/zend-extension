@@ -1,0 +1,10 @@
+{
+  "first_name": "Winston",
+  "surname"   : "Churchill",
+  "Offices"   : ["First Sealord", "Prime Minister"],
+  "Quote"     : {
+    "source"    : "https://quoteinvestigator.com/2014/08/27/drink-it/",
+    "occasision" : "Quarrel with Nancy Astor",
+    "text"      : "If I Were Your Husband I’d Drink It"
+  }
+}
