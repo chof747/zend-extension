@@ -3,14 +3,15 @@
 abstract class Chof_Util_Etl_Map
 {
   protected static $instance = null;
+  private static $STRUCTURE_KEY = 'structure';
   
   protected $targets;
   
-  public static function map(array $input)
+  public static function map(array $input, $structure = null)
   //****************************************************************************
   {
     $class = get_called_class();
-    self::$instance = new $class();
+    self::$instance = new $class($structure);
     
     $result = array();
     
@@ -20,6 +21,20 @@ abstract class Chof_Util_Etl_Map
     }
     
     return $result;
+  }
+  
+  private static function extractStructure(array $structure)
+  //****************************************************************************
+  {
+    if (array_key_exists(self::$STRUCTURE_KEY, $structure) && 
+        is_array($structure[self::$STRUCTURE_KEY]))
+    {
+      return $structure[self::$STRUCTURE_KEY];
+    }
+    else
+    {
+      return $structure;
+    }
   }
   
   private static function simpleConversion($type, $value)
@@ -52,12 +67,38 @@ abstract class Chof_Util_Etl_Map
     }
   }
   
-  protected function __construct()
+  protected function __construct($structure = null)
   //****************************************************************************
   {
-    $this->targets = $this->defineTargetStructure();
+    if ($structure === null)
+    {
+      $this->targets = $this->defineTargetStructure();
+    }
+    else if (is_string($structure))
+    {
+      $this->targets = self::extractStructure(Zend_Json::decode($structure));
+    }
+    else if (is_array($structure))
+    {
+      $this->targets = self::extractStructure($structure);
+    }
+    else 
+    {
+      throw new Chof_Util_Etl_Map_WrongDefinition(
+        "Provided structure is not a supported mapping specification!");
+    }
+    
+    $this->initialize($structure);
   }
   
+  protected function defineTargetStructure()
+  //****************************************************************************
+  {
+    throw new Chof_Util_Etl_Map_WrongDefinition(
+       "No target structure define, provide either json or array with definition!");
+  }
+  
+    
   protected function convertRow($row)
   //****************************************************************************
   {
@@ -93,7 +134,7 @@ abstract class Chof_Util_Etl_Map
     return $converted;
   }
   
-  protected abstract function defineTargetStructure();
+  protected abstract function initialize($structure);
   protected abstract function mapRow($row);
 }
 

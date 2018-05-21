@@ -10,6 +10,7 @@ require_once('Zend/Application.php');
 class BaseTestCase extends PHPUnit_Framework_TestCase
 {
   protected $bootstrap;
+  protected $basepath;
    
   public function setUp()
   #*****************************************************************************
@@ -20,6 +21,8 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
     TESTFILES_PATH . '/application.ini'
     );
     $this->bootstrap->bootstrap();
+    
+    $this->basepath = '/../../files';
 
     parent::setUp();
   }
@@ -72,6 +75,14 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
       $testFile);
   	
   }
+  
+  protected function pathto($filename)
+  //****************************************************************************
+  {
+    return dirname(__FILE__)."$this->basepath/$filename";
+  }
+  
+  
 }
 
 function microtime_float()

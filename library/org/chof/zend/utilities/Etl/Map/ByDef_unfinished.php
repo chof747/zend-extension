@@ -1,30 +1,51 @@
 <?php
 
-abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
+function array_map_assoc(callable $f, array $a) {
+  return array_column(array_map($f, array_keys($a), $a), 1, 0);
+}
+
+abstract class Chof_Util_Etl_Map_ByDef extends Chof_Util_Etl_Map
 {
-  private static $SIMPLE_KEY = 'mappings';
+  private static $MAPPING_KEY = 'mappings';
   
-  protected $simples;
+  private static $REGEXP_FUNC = '/([\w_]*?)\(([\w,#\s]*?)\)/';
+  
+  protected $mappings;
   
   protected function initialize($structure)
   //****************************************************************************
   {
     if (!empty($structure) &&
-        array_key_exists(self::$SIMPLE_KEY, $structure) &&
-        is_array($structure[self::$SIMPLE_KEY]))
+        array_key_exists(self::$MAPPING_KEY, $structure) &&
+        is_array($structure[self::$MAPPING_KEY]))
     {
-      $this->simples = $structure[self::$SIMPLE_KEY]; 
+      $this->mappings = array_map_assoc(array($this, 'checkMapping'),
+        $structure[self::$MAPPING_KEY]);
     }
     else
     {
-      $this->simples = $this->simpleMappings();
+      throw Chof_Util_Etl_MappingNotFound(
+        "Mapping not found must be provided as ".self::$MAPPING_KEY.
+        " in a specification structure");
     }
   }
   
-  protected function simpleMappings()
+  private function checkMapping($mapping, $column)
   //****************************************************************************
   {
-    return array();
+    return [$column, $mapping];
+  }
+  
+  protected function allowedFunctions()
+  {
+    return array(
+      'abs' => 1, 
+      'sin' => 1, 
+      'cos' => 1, 
+      'exp' => 1,
+      'pow' => 2,
+      'pi'  => 0
+    );
   }
   
   protected function mapRow($input)
@@ -63,7 +84,7 @@ abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
 }
 
 
-class Chof_Util_Etl_Map_MappingMethodNotFound extends Zend_Exception
+class Chof_Util_Etl_Map_NotFound extends Zend_Exception
 {
   
 }

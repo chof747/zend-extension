@@ -1,0 +1,19 @@
+{
+  "structure":{
+    "Name":"string",
+    "Street":"string",
+    "BirthDate":{
+      "type":"date",
+      "pattern":"mysql-date"
+    },
+    "Country of Residence":"string",
+    "Cars":"integer",
+    "Graduation Date":"date"
+  },
+  "mappings":{
+    "Cars":"vehicle_number",
+    "BirthDate":"dateOfBirth",
+    "Graduation Date":"dateOfGraduation",
+    "Street":"address_1"
+  }
+}
