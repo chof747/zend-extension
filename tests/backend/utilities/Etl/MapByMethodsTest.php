@@ -56,12 +56,13 @@ class MapByMethodsTest extends BaseTestCase
     
   }
   
+  /**
+   * @expectedException        Chof_Util_Etl_Map_WrongDefinition
+   * @expectedExceptionMessage No target structure define, provide either json or array with definition!
+   */
   public function testMapperWithoutAnyDefinition()
   //****************************************************************************
   {
-    $this->expectException(Chof_Util_Etl_Map_WrongDefinition::class);
-    $this->expectExceptionMessage(
-      'No target structure define, provide either json or array with definition!');
     require_once(dirname(__FILE__)."/stubs/TestMapperWithoutDef.php");
     
     $input = Chof_Util_Etl_Read_Json::read(
