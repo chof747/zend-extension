@@ -1,0 +1,11 @@
+{
+  "Name":"string",
+  "Street":"string",
+  "BirthDate":{
+    "type":"date",
+    "pattern":"mysql-date"
+  },
+  "Country of Residence":"string",
+  "Cars":"integer",
+  "Graduation Date":"date"
+}
