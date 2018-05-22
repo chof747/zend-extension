@@ -1,0 +1,23 @@
+{
+  "structure":{
+    "Name":"string",
+    "Street":"string",
+    "BirthDate":{
+      "type":"date",
+      "pattern":"mysql-date"
+    },
+    "City":"string",
+    "Zip":"integer",
+    "Country of Residence":"string",
+    "Cars":"integer",
+    "Graduation Date":"date"
+  },
+  "mappings":{
+    "Cars":"vehicle_number",
+    "BirthDate":"dateOfBirth",
+    "Graduation Date":"dateOfGraduation",
+    "Street":"address_1",
+    "City":"cv=Vienna",
+    "Zip":"cv=1010"
+  }
+}

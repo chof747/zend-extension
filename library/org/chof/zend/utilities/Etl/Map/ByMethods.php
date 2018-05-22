@@ -4,7 +4,8 @@ abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
 {
   private static $SIMPLE_KEY = 'mappings';
   
-  protected $simples;
+  protected $simples = array();
+  protected $defaults = array();
   
   protected function initialize($structure)
   //****************************************************************************
@@ -13,11 +14,23 @@ abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
         array_key_exists(self::$SIMPLE_KEY, $structure) &&
         is_array($structure[self::$SIMPLE_KEY]))
     {
-      $this->simples = $structure[self::$SIMPLE_KEY]; 
+      $mappings = $structure[self::$SIMPLE_KEY]; 
     }
     else
     {
-      $this->simples = $this->simpleMappings();
+      $mappings = $this->simpleMappings();
+    }
+    
+    foreach($mappings as $column => $def)
+    {
+      if (substr($def, 0, 3) == 'cv=')
+      {
+        $this->defaults[$column] = substr($def, 3);
+      }
+      else
+      {
+        $this->simples[$column] = $def;
+      }
     }
   }
   
@@ -34,8 +47,11 @@ abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
     foreach($this->targets as $column => $def)
     {
 
-      
-      if(array_key_exists($column, $this->simples))
+      if (array_key_exists($column, $this->defaults))
+      {
+        $mapped[$column] = $this->defaults[$column];
+      }
+      else if(array_key_exists($column, $this->simples))
       {
         $mapped[$column] = $input[$this->simples[$column]];
       }
