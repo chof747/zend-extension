@@ -3,15 +3,16 @@
 abstract class Chof_Util_Etl_Map
 {
   protected static $instance = null;
-  private static $STRUCTURE_KEY = 'structure';
+  public static $STRUCTURE_KEY = 'structure';
   
   protected $targets;
+  protected $context;
   
-  public static function map(array $input, $structure = null)
+  public static function map(array $input, $structure = null, $context = null)
   //****************************************************************************
   {
     $class = get_called_class();
-    self::$instance = new $class($structure);
+    self::$instance = new $class($structure, $context);
     
     $result = array();
     
@@ -67,9 +68,11 @@ abstract class Chof_Util_Etl_Map
     }
   }
   
-  protected function __construct($structure = null)
+  protected function __construct($structure = null, $context = array())
   //****************************************************************************
   {
+    $this->context = $context;
+    
     if ($structure === null)
     {
       $this->targets = $this->defineTargetStructure();

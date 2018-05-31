@@ -1,8 +1,8 @@
 <?php
 
-abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
+class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
 {
-  private static $SIMPLE_KEY = 'mappings';
+  public static $SIMPLE_KEY = 'mappings';
   
   protected $simples = array();
   protected $defaults = array();
@@ -66,6 +66,11 @@ abstract class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
         {
           $mapped[$column] = $this->$method($input);
         }
+        else if (is_object($this->context) && method_exists($this->context, $method))
+        {
+          $mapped[$column] = $this->context->$method($input);
+        }
+          
         else 
         {
           throw new Chof_Util_Etl_Map_MappingMethodNotFound(
