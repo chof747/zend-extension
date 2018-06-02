@@ -12,6 +12,10 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
      */
     protected $_statusRow = null;
     
+    /**
+     * @var Chof_Util_Queue_Adapter_Feedbackdb_Error
+     */
+    protected $_errorTable = null;
     
   public function __construct($options, Zend_Queue $queue = null)
   //****************************************************************************
@@ -19,6 +23,10 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
     parent::__construct($options, $queue);
     
     $this->_statusTable = new Chof_Util_Queue_Adapter_Feedbackdb_Status(array(
+            'db' => $this->_messageTable->getAdapter()
+        ));
+    
+    $this->_errorTable = new Chof_Util_Queue_Adapter_Feedbackdb_Error(array(
             'db' => $this->_messageTable->getAdapter()
         ));
   }
@@ -134,6 +142,41 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
     else
     {
       return false;
+    }
+  }
+
+  public function retrieveErrors(Chof_Util_Queue_Message $message)
+  //****************************************************************************
+  {
+    $errorset = $this->_errorTable->fetchAll('message_id = '.$message->message_id);
+    if ($errorset->count() > 0)
+    {
+      return $errorset->toArray();
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  public function reportError(Chof_Util_Queue_Message $message, 
+                              $errorCode, $errorMessage, $localizer)
+  //****************************************************************************
+  {
+    $errorRow = $this->_errorTable->createRow();
+    $errorRow->message_id = $message->message_id;
+    $errorRow->timeoccured = time();
+    $errorRow->errorcode = $errorCode;
+    $errorRow->errormessage = substr($errorMessage, 0, 512);
+    $errorRow->localizer = substr($localizer, 0, 80);
+    
+    try 
+    {
+      $errorRow->save();
+    } catch (Exception $e) 
+    {
+      require_once 'Zend/Queue/Exception.php';
+      throw new Zend_Queue_Exception($e->getMessage(), $e->getCode(), $e);
     }
   }
   

@@ -50,6 +50,35 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
     $this->__getAdapter()->updateStatus($this, $this->complete);
   }
   
+  public function getErrors()
+  //****************************************************************************
+  {
+    $errors = $this->__getAdapter()->retrieveErrors($this);
+    if (is_array($errors))
+    {
+      return array_map(function($e) {
+        $error = new stdClass();
+        $error->errorCode = $e['errorcode'];
+        $error->errorMessage = $e['errormessage'];
+        $error->localizer = $e['localizer'];
+        
+        return $error;
+        
+      }, $errors);      
+    }
+    else
+    {
+      return array();
+    }
+  }
+  
+  public function reportError($errorCode, $errorMessage, $localizer)
+  //****************************************************************************
+  {
+    $this->__getAdapter()->reportError($this, 
+      $errorCode, $errorMessage, $localizer);  
+  }
+  
   protected function retrieveCompletion()
   //****************************************************************************
   {
