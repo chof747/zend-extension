@@ -82,7 +82,7 @@ class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
         }
         catch (Exception $e)
         {
-          throw new Chof_Uil_Etl_Map_MappingError($e, $column);
+          throw new Chof_Util_Etl_Map_MappingError($e, $column);
         }
       }
     }
@@ -97,7 +97,7 @@ class Chof_Util_Etl_Map_MappingMethodNotFound extends Zend_Exception
   
 }
 
-class Chof_Uil_Etl_Map_MappingError extends Chof_Util_Etl_Map_Exception
+class Chof_Util_Etl_Map_MappingError extends Chof_Util_Etl_Map_Exception
 {
 }
 ?>
