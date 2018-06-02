@@ -37,3 +37,14 @@ CREATE TABLE IF NOT EXISTS `{queue}`.`status` (
   `complete`     int(10) unsigned default NULL,
   PRIMARY KEY (`message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `{queue}`.`error` (
+  `error_id`     bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `message_id`   bigint(20) unsigned NOT NULL,
+  `timeoccured`  int(10) unsigned NOT NULL,
+  `errorcode`    int(11) default 0,
+  `errormessage` varchar(512) default NULL,
+  `localizer`    varchar(80),
+  PRIMARY KEY (`error_id`),
+  KEY `error_message_ix` (`message_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
