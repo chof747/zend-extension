@@ -4,7 +4,7 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
 {
   /**
    * Provides an update on the percentage of completion of this task
-   * 
+   *
    * @param integer $complete
    */
   
@@ -28,7 +28,7 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
    */
   public function setCompletion($value)
   //****************************************************************************
-  { 
+  {
     $this->complete = ($value < 0) ? 0 : (($value > 100) ? 100 : $value);
     $this->updateCompletion();
   }
@@ -39,7 +39,7 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
    */
   public function getCompletion()
   //****************************************************************************
-  { 
+  {
     $this->retrieveCompletion();
     return array($this->complete, $this->status);
   }
@@ -64,7 +64,7 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
         
         return $error;
         
-      }, $errors);      
+      }, $errors);
     }
     else
     {
@@ -75,16 +75,16 @@ class Chof_Util_Queue_Message extends Zend_Queue_Message
   public function reportError($errorCode, $errorMessage, $localizer)
   //****************************************************************************
   {
-    $this->__getAdapter()->reportError($this, 
-      $errorCode, $errorMessage, $localizer);  
+    $this->__getAdapter()->reportError($this,
+      $errorCode, $errorMessage, $localizer);
   }
   
   protected function retrieveCompletion()
   //****************************************************************************
   {
-    list($this->complete, $this->status) = 
-      $this->__getAdapter()->retrieveStatus($this); 
-   
+    list($this->complete, $this->status) =
+    $this->__getAdapter()->retrieveStatus($this);
+    
   }
   
   private function __getAdapter()

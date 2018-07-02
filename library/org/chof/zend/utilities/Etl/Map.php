@@ -3,24 +3,67 @@
 abstract class Chof_Util_Etl_Map
 {
   protected static $instance = null;
-  private static $STRUCTURE_KEY = 'structure';
+  public static $STRUCTURE_KEY = 'structure';
   
   protected $targets;
+  protected $context;
   
-  public static function map(array $input, $structure = null)
+  public static function map(array $input, $structure = null, 
+                             Chof_Util_Etl_Map_Context $context = null)
   //****************************************************************************
   {
     $class = get_called_class();
-    self::$instance = new $class($structure);
+    self::$instance = new $class($structure, $context);
     
     $result = array();
+    $line = 1;
     
     foreach($input as $row) 
     {
-      $result[] = self::$instance->convertRow(self::$instance->mapRow($row));
+      $mapped = false;
+      try
+      {
+        $mapped = self::$instance->mapRow($row);
+      }
+      catch(Exception $e)
+      {
+        self::handleError($context, $e, $line, $input);
+      }
+      
+      if ($mapped !== false)
+      {
+        try
+        {
+          $result[] = self::$instance->convertRow($mapped);
+        }
+        catch(Chof_Util_Etl_Map_ConversionError $e)
+        {
+          self::handleError($context, $e, $line, $input);
+        }
+      }
+
+      $line++;
     }
     
     return $result;
+  }
+  
+  private static function handleError(Chof_Util_Etl_Map_Context $context,
+                                      Exception $e, $line, $input)
+  //****************************************************************************
+  {
+    if (is_object($context))
+    {
+      $context->handleMappingError(
+          $e,
+          $line,
+          ($e instanceof Chof_Util_Etl_Map_Exception) ? $e->column : null,
+          $input);
+    }
+    else
+    {
+      throw $e;
+    }  
   }
   
   private static function extractStructure(array $structure)
@@ -37,39 +80,53 @@ abstract class Chof_Util_Etl_Map
     }
   }
   
-  private static function simpleConversion($type, $value)
+  private static function simpleConversion($type, $value, $column)
   //***************************************************************************
   {
-    if ($type == 'integer')
-    {
-      return (int)$value;
-    }
-    else if ($type == 'number')
-    {
-       return (float)$value;
-    }
-    else if ($type == 'boolean')
-    {
-       return ($value) ? true : false;
-    }
-    else if ($type == 'date')
-    {
-       return new DateTime($value);
-    }
-    else if ($type == 'string')
-    {
-      return "$value";
-    }
-    else
+    if (array_search($type, array(
+        'integer', 'number', 'boolean', 'date', 'string'))===false)
     {
       throw new Chof_Util_Etl_Map_TypeDoesNotExist(
-        "$type cannot be used as a target type");
+          "$type cannot be used as a target type");
+    }
+    
+    try
+    {
+      if (($type == 'integer') || ($type == 'number'))
+      {
+        if (is_numeric($value))
+        { 
+          return $value * (($type == 'integer') ? 1 : 1.0);
+        }
+        else
+        {
+          throw new UnexpectedValueException("$value is not a number");
+        }
+      }
+      else if ($type == 'boolean')
+      {
+         return ($value) ? true : false;
+      }
+      else if ($type == 'date')
+      {
+         return new DateTime($value);
+      }
+      else 
+      {
+        return "$value";
+      }
+    }
+    catch(Exception $e)
+    {
+      throw new Chof_Util_Etl_Map_ConversionError($e, $column);
     }
   }
   
-  protected function __construct($structure = null)
+  protected function __construct($structure = null, $context = array())
   //****************************************************************************
   {
+    $this->context = $context;
+    
     if ($structure === null)
     {
       $this->targets = $this->defineTargetStructure();
@@ -107,7 +164,7 @@ abstract class Chof_Util_Etl_Map
     {
       if (is_string($def))
       {
-        $converted[$column] = self::simpleConversion($def, $row[$column]);
+        $converted[$column] = self::simpleConversion($def, $row[$column], $column);
       }
       else if (is_array($def) && 
                (isset($def['type'])) && (isset($def['pattern'])))
@@ -120,13 +177,13 @@ abstract class Chof_Util_Etl_Map
         else
         {
           $converted[$column] = self::simpleConversion($def['type'],
-            sprintf($def['pattrn'], $row['column']));
+            sprintf($def['pattern'], $row['column'], $column));
         }
       }
       else 
       {
         throw new Chof_Util_Etl_Map_WrongDefinition(
-          "If you provde not a type as def you need to provide type + pattern");
+          "If you provide not a type as def you need to provide type + pattern");
       }
       
     }
@@ -146,6 +203,10 @@ class Chof_Util_Etl_Map_TypeDoesNotExist extends Zend_Exception
 class Chof_Util_Etl_Map_WrongDefinition extends Zend_Exception
 {
   
+}
+
+class Chof_Util_Etl_Map_ConversionError extends Chof_Util_Etl_Map_Exception
+{
 }
 
 ?>

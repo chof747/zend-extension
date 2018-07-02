@@ -1,0 +1,20 @@
+[
+  {
+    "first_name":"Max",
+    "second_name":"Mad",
+    "dateOfBirth":"1970-04-01",
+    "dateOfGraduation":"September 1st 1988",
+    "address_1":"Wilderness Outback 225",
+    "vehicle_number":"a",
+    "country_code":"AUS"
+  },
+  {
+    "first_name":"Peter",
+    "second_name":"Pan",
+    "dateOfBirth":"1934-03-15",
+    "dateOfGraduation":"5. march 2099",
+    "address_1":"Dream Land",
+    "vehicle_number":10,
+    "country_code":"USA"
+  }
+]

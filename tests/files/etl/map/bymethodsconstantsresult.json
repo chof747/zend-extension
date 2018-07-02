@@ -1,0 +1,22 @@
+[
+  {
+    "Name":"Max Mad",
+    "Street":"Wilderness Outback 225",
+    "BirthDate":"1970-04-01",
+    "City" : "Vienna",
+    "Zip" : 1010,
+    "Country of Residence":"AU",
+    "Cars":2,
+    "Graduation Date":"1988-09-01"
+  },
+  {
+    "Name":"Peter Pan",
+    "Street":"Dream Land",
+    "BirthDate":"1934-03-15",
+    "City" : "Vienna",
+    "Zip" : 1010,
+    "Country of Residence":"US",
+    "Cars":10,
+    "Graduation Date":"2099-03-05"
+  }
+]

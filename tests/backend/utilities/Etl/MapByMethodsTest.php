@@ -36,7 +36,6 @@ class MapByMethodsTest extends BaseTestCase
       $this->pathto('bymethodssimpleresult.json'));
     
     $this->assertArrayEquals($expected, TestMapperWithoutDef::map($input, $json));
-    
   }
   
   public function testByMethodMapperWithJsonDefinitionAndMapping()
@@ -51,6 +50,22 @@ class MapByMethodsTest extends BaseTestCase
       $this->pathto("bymethodssimple.json"));
     $expected = Chof_Util_Etl_Read_Json::read(
       $this->pathto('bymethodssimpleresult.json'));
+    
+    $this->assertArrayEquals($expected, TestMapperOnlyComplex::map($input, $json));    
+  }
+  
+  public function testByMethodMapperWithDefaultsAndJsonDefinition()
+  //****************************************************************************
+  {
+    require_once(dirname(__FILE__)."/stubs/TestMapperOnlyComplex.php");
+  
+    $json = Zend_Json::decode(
+      file_get_contents($this->pathto('structurewithmappinganddefaults.json')));
+
+    $input = Chof_Util_Etl_Read_Json::read(
+      $this->pathto("bymethodssimple.json"));
+    $expected = Chof_Util_Etl_Read_Json::read(
+      $this->pathto('bymethodsconstantsresult.json'));
     
     $this->assertArrayEquals($expected, TestMapperOnlyComplex::map($input, $json));
     

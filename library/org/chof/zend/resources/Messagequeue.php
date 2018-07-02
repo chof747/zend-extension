@@ -19,6 +19,11 @@ class Chof_Resource_Messagequeue extends
 	 	       'name' => $options['name'],
 	 	       'driverOptions' => $options['driverOptions']);
 	 	   
+	 	   if (!empty($options['authSession']))
+	 	   {
+	       $queueOptions['authSession'] = $options['authSession'];
+	 	   }
+	 	   
 	 	   if (!empty($options['adapterNamespace']))
 	 	   {
 	 	     $queueOptions['adapterNamespace'] = $options['adapterNamespace'];

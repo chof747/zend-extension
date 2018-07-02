@@ -4,29 +4,33 @@ class Chof_Controller_Helper_CheckAuth extends Zend_Controller_Action_Helper_Abs
   private function getAuthenticationHeader()
   #***************************************************************************** 
   {
-    $authorization = $this->getRequest()->getHeader('Authorization');
-    if ($authorization)
+    if ($this->getRequest() !== null)
     {
-      list($method, $credentials) = explode(' ', $authorization, 2);
-  
-      switch ($method)
+      $authorization = $this->getRequest()->getHeader('Authorization');
+      if ($authorization)
       {
-        case 'Basic' : 
-          $credentials = base64_decode($credentials);
-          list($login,$password) = explode(':', $credentials);
-          return array(
-            'login' => $login,
-            'password' => $password
-          );
-          break;
-        case 'ApiKey' :
-          $credentials = base64_decode($credentials);
-          return array(
-          	'login' => "",
-            'password' => $credentials
-          );
+        list($method, $credentials) = explode(' ', $authorization, 2);
+    
+        switch ($method)
+        {
+          case 'Basic' : 
+            $credentials = base64_decode($credentials);
+            list($login,$password) = explode(':', $credentials);
+            return array(
+              'login' => $login,
+              'password' => $password
+            );
+            break;
+          case 'ApiKey' :
+            $credentials = base64_decode($credentials);
+            return array(
+            	'login' => "",
+              'password' => $credentials
+            );
+        }
       }
     }
+    
     return false;
   }
  
