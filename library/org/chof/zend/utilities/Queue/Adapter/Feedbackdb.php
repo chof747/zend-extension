@@ -2,20 +2,45 @@
 
 class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
 {
-    /**
-     * @var Chof_Util_Queue_Adapter_Feedbackdb_Status
-     */
-    protected $_statusTable = null;
+  /**
+   * @var Chof_Util_Queue_Adapter_Feedbackdb_Status
+   */
+  protected $_statusTable = null;
 
-    /**
-     * @var Zend_Db_Table_Row_Abstract
-     */
-    protected $_statusRow = null;
+  /**
+   * @var Zend_Db_Table_Row_Abstract
+   */
+  protected $_statusRow = null;
+  
+  /**
+   * @var Chof_Util_Queue_Adapter_Feedbackdb_Error
+   */
+  protected $_errorTable = null;
+  
+  private $authSession = false;
+  
+  public function close()
+  {
+    $this->_messageTable->getAdapter()->closeConnection();
+  }
     
-    /**
-     * @var Chof_Util_Queue_Adapter_Feedbackdb_Error
-     */
-    protected $_errorTable = null;
+  private function checkAuth()
+  //****************************************************************************
+  {
+    $user = false;
+    
+    if ($this->authSession)
+    {
+      $checkAuth = new Chof_Controller_Helper_CheckAuth();
+      $user = $checkAuth->direct(array(
+          'session' => $this->authSession,
+          'autologin' => false,
+          'online'    => false
+          ));
+    }
+    
+    return $user;
+  }
     
   public function __construct($options, Zend_Queue $queue = null)
   //****************************************************************************
@@ -28,7 +53,12 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
     
     $this->_errorTable = new Chof_Util_Queue_Adapter_Feedbackdb_Error(array(
             'db' => $this->_messageTable->getAdapter()
-        ));
+        ));    
+    
+    if (isset($options['authSession']))
+    {
+      $this->authSession = $options['authSession'];
+    }
   }
   
   /**
@@ -45,6 +75,11 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
     $status->message_id = $msg->message_id;
     $status->created = $msg->created;
     $status->title = $msg->getTitle();
+    
+    if ($user = $this->checkAuth())
+    {
+      $status->user_id = $user;
+    }
     
     try {
       $status->save();
@@ -91,7 +126,7 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
   {
     $this->changeStatus($message, function(&$status) {
       $status->closed = time();
-      if (($status->complete != 100) || ($status === null)) 
+      if (($status->complete < 100) || ($status === null)) 
       {
         $status->status = 'terminated';
       }
