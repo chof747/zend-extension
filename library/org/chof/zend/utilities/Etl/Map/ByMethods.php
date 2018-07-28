@@ -44,6 +44,12 @@ class Chof_Util_Etl_Map_ByMethods extends Chof_Util_Etl_Map
   //****************************************************************************
   {
     $mapped = array();
+    
+    if (is_object($this->context) && method_exists($this->context, 'prepareRow'))
+    {
+      call_user_func(array($this->context, 'prepareRow'), $input);
+    }
+    
     foreach($this->targets as $column => $def)
     {
       if (array_key_exists($column, $this->defaults))
