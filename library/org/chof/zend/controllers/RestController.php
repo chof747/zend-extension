@@ -61,7 +61,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
    * the decorateModel() method.
    * 
    * @param Chof_Model_BaseModel $model
-   * @param unknown_type $format
+   * @param mixed $format
    */
   protected function makeMessageModel(Chof_Model_BaseModel $model, $format = false)
   #*****************************************************************************
@@ -632,7 +632,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
    * Extension hook which is triggered before an item is saved
    * 
    * @param Chof_Model_BaseModel $model
-   * @param unknown $new
+   * @param mixed $new
    * @returen boolean, true if it should be continued, false otherwise
    */
   protected function beforeSave(Chof_Model_BaseModel $model, $new)
@@ -645,7 +645,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
    * Extension hook which is triggered after an item is saved
    * 
    * @param Chof_Model_BaseModel $model
-   * @param unknown $new
+   * @param mixed $new
    */
   protected function afterSave(Chof_Model_BaseModel $model, $new)
   #*****************************************************************************

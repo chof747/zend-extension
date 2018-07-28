@@ -231,6 +231,13 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
       }
     }
   }
+  
+  public function messageStatusByUser($user)
+  //****************************************************************************
+  {
+    return $this->_statusTable->fetchAll($this->_statusTable->select()
+      ->where('user_id = ?', $user));
+  }
 }
 
 ?>
