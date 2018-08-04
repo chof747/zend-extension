@@ -61,6 +61,12 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
     }
   }
   
+  protected function alignIndices()
+  //****************************************************************************
+  {
+    $this->_messageTable->getAdapter()->query('CALL updateMessageCounter();');
+  }
+  
   /**
    * 
    * @see Zend_Queue_Adapter_DB::send()
@@ -68,6 +74,7 @@ class Chof_Util_Queue_Adapter_Feedbackdb extends Zend_Queue_Adapter_Db
   public function send($message, Zend_Queue $queue = null)
   //****************************************************************************
   {
+    $this->alignIndices();
     $msg = parent::send($message, $queue);
     
     //setup the status of the new message
