@@ -23,8 +23,8 @@ class Chof_Util_Etl_Read_CSV extends Chof_Util_Etl_Read
       while($line = fgets($fhandle))
       {
         $linenumber++;
-        $check_empty = trim($line);
-        if (!empty($check_empty))
+        $line = trim($line," \t\n\r\0\x0B$delimiter");
+        if (!empty($line))
         {
           $data = str_getcsv($line, $delimiter, $enclosure);
           //check that columns ar equal
