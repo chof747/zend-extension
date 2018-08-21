@@ -26,7 +26,7 @@ abstract class Chof_Model_Decorator_Message_Abstract extends Chof_Model_Decorato
   
   /**
    * Reads a message and updates the underlying model implementation
-   * @param unknown_type $messageData
+   * @param mixed $messageData
    */
   abstract public function decompose(array $messageData);
 
