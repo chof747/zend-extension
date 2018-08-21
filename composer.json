@@ -3,6 +3,7 @@
   "description": "Zend Framework 1 Extension for webprojects including model and mapper, Rest controller and various utilities",
   "license" : "GPL-3.0",
   "require":{
-    "zendframework/zendframework1":"1.12.*"
+    "zendframework/zendframework1":"1.12.*",
+    "phpoffice/phpspreadsheet": "1.4.*"
   }
 } 

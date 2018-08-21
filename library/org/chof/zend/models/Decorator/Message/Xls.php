@@ -49,7 +49,7 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
   private function initExcel()
   #*****************************************************************************
   {
-    $this->excel = new PHPExcel();
+    $this->excel = new PhpOffice\PhpSpreadsheet\Spreadsheet();
     $this->excel->setActiveSheetIndex(0); 
     $this->worksheet = $this->excel->getActiveSheet();
     $this->worksheet->setTitle($this->getName());
@@ -81,11 +81,11 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
     $style = $this->worksheet->getStyle("$left:$right");
     
     $style->getFont()->getColor()
-                     ->setARGB(PHPExcel_Style_Color::COLOR_WHITE);
+                     ->setARGB(PhpOffice\PhpSpreadsheet\Style\Fill::COLOR_WHITE);
                      
-    $style->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+    $style->getFill()->setFillType(PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
     $style->getFill()->getStartColor()
-                     ->setARGB(PHPExcel_Style_Color::COLOR_DARKBLUE);
+          ->setARGB(PhpOffice\PhpSpreadsheet\Style\Color::COLOR_DARKBLUE);
   }
   
   private function autoSizeColumns($cols)
@@ -112,13 +112,13 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
       {
         if($cell instanceof DateTime)
         {
-          $value = PHPExcel_Shared_Date::PHPToExcel($cell);
+          $value = PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($cell);
           $cell = $this->worksheet->getCellByColumnAndRow($nCol, $nRow);
           $cell->setValue($value);
           
           $style = $this->worksheet->getStyle($cell->getCoordinate());
           $style->getNumberFormat()->setFormatCode(
-            PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD2);          
+            PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_YYYYMMDD2);          
         }
         else 
         {
@@ -151,7 +151,7 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
     
     //write into a temporary file
     $tmpfile = tempnam(sys_get_temp_dir(), "xls");
-    $objWriter = new PHPExcel_Writer_Excel2007($this->excel);
+    $objWriter = new PhpOffice\PhpSpreadsheet\Writer\Xlsx($this->excel);
     $objWriter->save($tmpfile);
     
     $this->closeExcel();
