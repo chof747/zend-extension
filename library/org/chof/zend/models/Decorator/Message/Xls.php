@@ -1,4 +1,9 @@
 <?php
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+
 
 /*
  * Decorator handling message in/output in xls format and providing the csv schema
@@ -49,7 +54,7 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
   private function initExcel()
   #*****************************************************************************
   {
-    $this->excel = new PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $this->excel = new Spreadsheet();
     $this->excel->setActiveSheetIndex(0); 
     $this->worksheet = $this->excel->getActiveSheet();
     $this->worksheet->setTitle($this->getName());
@@ -66,7 +71,7 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
   private function setFilters($cols, $rows)
   #*****************************************************************************
   {
-    $topleft     = $this->getCoordinate(0,1);
+    $topleft     = $this->getCoordinate(1,1);
     $bottomright = $this->getCoordinate($cols-1, $rows);
         
     $this->worksheet->setAutoFilter($topleft.":".$bottomright);
@@ -75,13 +80,13 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
   private function formatHeader($cols)
   #*****************************************************************************
   {
-    $left  = $this->getCoordinate(0,1);
+    $left  = $this->getCoordinate(1,1);
     $right = $this->getCoordinate($cols-1, 1);
     
     $style = $this->worksheet->getStyle("$left:$right");
     
     $style->getFont()->getColor()
-                     ->setARGB(PhpOffice\PhpSpreadsheet\Style\Fill::COLOR_WHITE);
+                     ->setARGB(PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
                      
     $style->getFill()->setFillType(PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
     $style->getFill()->getStartColor()
@@ -91,7 +96,7 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
   private function autoSizeColumns($cols)
   #*****************************************************************************
   {
-    for($c=0;$c<$cols;$c++)
+    for($c=1;$c<=$cols;$c++)
     {
       $this->worksheet->getColumnDimensionByColumn($c)->setAutoSize(true);
     }
@@ -103,35 +108,69 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
     $nRow = 0;
     $nCol = 0;
     
+    $schema = $this->model->schema();
+    $properties = array();
+    if ((isset($schema['properties'])) && (is_array($schema['properties'])))
+    {
+      foreach($schema['properties'] as $attribute => $definition)
+      {
+        if ($this->isRelevant($definition))
+        {
+          $properties[] = $definition;
+        }
+      }
+    }
+    if ((isset($schema['links'])) && (is_array($schema['links'])))
+    {
+      foreach($schema['links'] as $link)
+      {
+        $properties[] = array(
+          'type' => 'string'
+        );
+      }
+    }
+    
+    //ZLOG($properties);
+    
     foreach($data as $row)
     {
       $nRow++;
-      $nCol = 0;
-      
-      foreach($row as $cell)
+      $nCol = 1;
+     
+      foreach($row as $value)
       {
-        if($cell instanceof DateTime)
+        if($value instanceof DateTime)
         {
-          $value = PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($cell);
+          $value = PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($value);
           $cell = $this->worksheet->getCellByColumnAndRow($nCol, $nRow);
           $cell->setValue($value);
           
+          
           $style = $this->worksheet->getStyle($cell->getCoordinate());
           $style->getNumberFormat()->setFormatCode(
-            PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_YYYYMMDD2);          
+            NumberFormat::FORMAT_DATE_YYYYMMDD2);          
+        }
+        else if($properties[$nCol-1]['type'] == 'string')
+        {
+          $cell = $this->worksheet->getCellByColumnAndRow($nCol, $nRow);
+          $cell->setValueExplicit($value,PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+          
+          $style = $this->worksheet->getStyle($cell->getCoordinate());
+          $style->getNumberFormat()->setFormatCode(
+            NumberFormat::FORMAT_TEXT);
         }
         else 
         {
-          $this->worksheet->setCellValueByColumnAndRow($nCol, $nRow, $cell);
+          $this->worksheet->setCellValueByColumnAndRow($nCol, $nRow, $value);
         }
         
         $nCol++;
       }
     }
     
-    $this->setFilters($nCol, $nRow);
-    $this->formatHeader($nCol);
-    $this->autoSizeColumns($nCol);
+   $this->setFilters($nCol, $nRow);
+   $this->formatHeader($nCol);
+   $this->autoSizeColumns($nCol);
   }
   
   private function closeExcel()
@@ -151,7 +190,7 @@ class Chof_Model_Decorator_Message_Xls extends Chof_Model_Decorator_Message_Csv
     
     //write into a temporary file
     $tmpfile = tempnam(sys_get_temp_dir(), "xls");
-    $objWriter = new PhpOffice\PhpSpreadsheet\Writer\Xlsx($this->excel);
+    $objWriter = IOFactory::createWriter($this->excel, 'Xlsx');
     $objWriter->save($tmpfile);
     
     $this->closeExcel();

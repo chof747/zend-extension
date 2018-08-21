@@ -26,7 +26,7 @@ class Chof_Model_Decorator_Message_Csv extends Chof_Model_Decorator_Message_Abst
     {
       foreach($schema['properties'] as $attribute => $definition)
       {
-        if (!$this->isReadOnly($definition))
+        if ($this->isRelevant($definition))
         {
           $message[$attribute] = $data[$attribute];
 
@@ -80,15 +80,16 @@ class Chof_Model_Decorator_Message_Csv extends Chof_Model_Decorator_Message_Abst
     return $message;
   }
   
-  private function isReadOnly(array $definition)
+  protected function isRelevant(array $definition)
+  #*****************************************************************************
   {
     if (isset($definition['readonly']))
     {
-      return ($definition['readonly'] == true);
+      return ($definition['readonly'] == false);
     }
     else
     {
-      return false;
+      return true;
     }
   }
   
@@ -102,7 +103,7 @@ class Chof_Model_Decorator_Message_Csv extends Chof_Model_Decorator_Message_Abst
     {
       foreach($schema['properties'] as $attribute => $definition)
       {
-        if (!$this->isReadOnly($definition))
+        if ($this->isRelevant($definition))
         {
           $header[] = (isset($definition['title']))
             ? $definition['title'] 
