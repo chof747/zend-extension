@@ -14,9 +14,11 @@ class Chof_Util_XML
   public static function encode($array, $root = 'data', $xml=null)
   #*****************************************************************************
   {
+    $asXml = true;
     if ($xml == null)
     {
       $xml = simplexml_load_string("<?xml version='1.0' encoding='utf-8'?><$root />");
+      $asXml = false;
     }
     
     foreach($array as $key => $value)
@@ -32,7 +34,7 @@ class Chof_Util_XML
       if (is_array($value))
       {
         $node = $xml->addChild($key);
-        ArrayToXML::toXml($value, $rootNodeName, $node);
+        self::encode($value, $root, $node);
       }
       else
       {
@@ -42,7 +44,7 @@ class Chof_Util_XML
       }
     }
     // pass back as string. or simple xml object if you want!
-    return $xml->asXML();
+    return ($asXml) ? $xml : $xml->asXML();
   }
 }
 ?>
