@@ -19,9 +19,7 @@ class Chof_Model_ValidationException extends Zend_Exception
   /**
    * Constructor for an invalid field exception
    * 
-   * @param $field the content of the invalid field
-   * @param $fieldname the name of the invalid field
-   * @param $code an optional error code
+   * @param $code integer an optional error code
    */
   function __construct($code = -10000)
   #*****************************************************************************

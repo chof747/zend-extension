@@ -4,9 +4,8 @@ abstract class Chof_Model_BaseMapper
 {
   /**
    *
-   * @var name of the corresponding data table
+   * @var string name of the corresponding data table
    */
-
   protected $_dbTable;
   
   protected $model = null;
@@ -56,7 +55,7 @@ abstract class Chof_Model_BaseMapper
    * database. The default implementation simply passes the data as is.
    * 
    * @param array $data
-   * @return the prepared data (a simple pass through in the standard 
+   * @return array the prepared data (a simple pass through in the standard 
    *         implementation.
    */
   protected function beforeDataBaseSave($data)
@@ -67,8 +66,6 @@ abstract class Chof_Model_BaseMapper
 
   /**
    * Abstract method definition for saving the model to the mapped entity
-   *
-   * @param $model the model to be saved
    */
   public function save()
   //****************************************************************************
@@ -104,8 +101,8 @@ abstract class Chof_Model_BaseMapper
 
   /**
    * 
-   * @param $key the primary key of the record to be deleted
-   * @return unknown_type
+   * @param mixed $key the primary key of the record to be deleted
+   * @return mixed 
    */
   public function delete($key)
   //****************************************************************************
@@ -118,7 +115,7 @@ abstract class Chof_Model_BaseMapper
   
   /**
    * SQL Injection is prevented by the Zend_Db_Table_Abstract find method 
-   * @param unknown_type $id
+   * @param mixed $id
    */
   private function queryTableById($id)
   //****************************************************************************
@@ -160,7 +157,7 @@ abstract class Chof_Model_BaseMapper
    * database. The default implementation simply passes the row data as is.
    * 
    * @param array $row a result row from the database
-   * @return the prepared data (a simple pass through in the standard 
+   * @return mixed the prepared data (a simple pass through in the standard 
    *         implementation.
    */
   protected function afterDatabaseRead($row)
@@ -172,8 +169,8 @@ abstract class Chof_Model_BaseMapper
   /**
    * Method to search for a model based on the primary key
    *
-   * @param $id the primary key
-   * @return the model matching the primary key
+   * @param $id mixed the primary key
+   * @return Chof_Model_BaseModel the model matching the primary key
    */
   public function find()
   //****************************************************************************
@@ -222,7 +219,7 @@ abstract class Chof_Model_BaseMapper
    *  with one parameter only.
    *
    * @param array $fetchparams
-   * @return list of matching models
+   * @return Chof_Model_BaseModel[] list of matching models
    */
   public function fetch(array $fetchparams = null)
   #****************************************************************************
@@ -265,18 +262,18 @@ abstract class Chof_Model_BaseMapper
    * Abstract method to be concretized by descendant classes to provide a
    * mechanism to fill a model object from the content of a datatable row
    *
-   * @param $row the datatable row
-   * @param $model the model to be filled by the row
-   * @param $datetimefmt the date and time format of provided date fields
-   * @return unknown_type
+   * @param $row mixed the datatable row
+   * @param $model Chof_Model_BaseModel the model to be filled by the row
+   * @param $datetimefmt string the date and time format of provided date fields
+   * @return mixed
    */
   abstract protected function fillFromRow($row, Chof_Model_BaseModel $model, $datetimefmt = '');
 
   /**
    * Abstract helping method to define the concrete mapping from model to entity
    *
-   * @param  $model the model to be saved
-   * @return an array containing pairs of columns and values to be saved from
+   * @param  $model Chof_Model_BaseModel the model to be saved
+   * @return array an array containing pairs of columns and values to be saved from
    *         the model
    */
   abstract protected function saveData(Chof_Model_BaseModel $model, $datetimefmt = '');
@@ -285,8 +282,8 @@ abstract class Chof_Model_BaseMapper
    * Checking method to validate if a base model reference is an instance of a
    * concrete model class
    *
-   * @param $model the base model class which should be checked for concrete type
-   * @return a reference to model if the type is the concrete type
+   * @param $model Chof_Model_BaseModel the base model class which should be checked for concrete type
+   * @return Chof_Model_BaseModel a reference to model if the type is the concrete type
    */
   protected function getSaveReference(Chof_Model_BaseModel $model)
   {
@@ -330,7 +327,7 @@ abstract class Chof_Model_BaseMapper
   /**
    * Retrieves last used ID of current table (mapped entity)
    *
-   * @return last used ID of mapped entity
+   * @return mixed last used ID of mapped entity
    */
   public function getLastID()
   #****************************************************************************
@@ -351,13 +348,10 @@ abstract class Chof_Model_BaseMapper
       return $row->$primary;
   }
   
-  //TODO: Add getNextID / getLastID to enable browsing throw data sets with id 
-  //      next and prev, first and last 
-
   /**
    * Retrieves last used ID of current table (mapped entity)
    *
-   * @return last used ID of mapped entity
+   * @return integer last used ID of mapped entity
    */
   public function getCount($filter = false)
   #****************************************************************************

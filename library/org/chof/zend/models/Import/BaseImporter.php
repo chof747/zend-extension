@@ -67,7 +67,7 @@ abstract class Chof_Model_Import_BaseImporter
    * before the {@link read} method is called to execute the actual importing
    * algorithm
    * 
-   * @param any $data
+   * @param mixed $data
    * @return array the import function returns an associative array containing
    *               the number of
    *               - imported data elements
@@ -107,7 +107,7 @@ abstract class Chof_Model_Import_BaseImporter
    * method, since this method performs some house keeping of the underlying
    * data structures.
    * 
-   * @param any $data
+   * @param mixed $data
    * @return integer the number of imported items 
    */
   abstract protected function read($data);
@@ -140,8 +140,8 @@ abstract class Chof_Model_Import_BaseImporter
 
   /**
    * retrieves the error with the index $ix
-   * @param $ix the index of the error
-   * @return any the error requested or null
+   * @param $ix integer the index of the error
+   * @return mixed the error requested or null
    */
   public function getError($ix)
   #****************************************************************************
@@ -183,8 +183,8 @@ abstract class Chof_Model_Import_BaseImporter
 
   /**
    * retrieves the import with the index $ix
-   * @param $ix the index of the imported object
-   * @return any the import type 
+   * @param $ix integer the index of the imported object
+   * @return mixed the import type 
    */
   public function getImport($ix)
   #****************************************************************************

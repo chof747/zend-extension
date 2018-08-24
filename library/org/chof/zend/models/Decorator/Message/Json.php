@@ -7,7 +7,7 @@
 class Chof_Model_Decorator_Message_Json extends Chof_Model_Decorator_Message_Abstract
 {
   /**
-   * @see Chof_ModelDecorator_Message_Abstract::getMessage()
+   * @see Chof_Model_Decorator_Message_Abstract::getMessage()
    */
   public function compose()
   #*****************************************************************************

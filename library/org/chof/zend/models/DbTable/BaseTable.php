@@ -4,7 +4,7 @@ class Chof_Model_DbTable_BaseTable extends Zend_Db_Table_Abstract
   /**
    * Returns the field definition of the primary key
    * 
-   * @return the field names comprising the primary key
+   * @return array field names comprising the primary key
    */
   public function getPrimaryKey()
   //****************************************************************************

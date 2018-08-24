@@ -15,7 +15,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
                                                Chof_Model_Interface_Validateable
 {
   /**
-   * @var reference to the corresponding mapper variable
+   * @var Chof_Model_BaseMapper reference to the corresponding mapper variable
    */
   protected $_mapper;
   
@@ -49,14 +49,14 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * The concrete class has to implement this factory function to provide the
    * correct data mapper class for the model.
    * 
-   * @return the corresponding data mapper
+   * @return Chof_Model_BaseMapper the corresponding data mapper
    */
   abstract protected function createMapper();
 
   /**
    * Primary key retrieval
    * 
-   * @return the primary key of the model object
+   * @return mixed the primary key of the model object
    */
   abstract public function getPrimary();
   
@@ -119,7 +119,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   /**
    * Returns the class name or unique identifier of all models
    * 
-   * @return the name of the model
+   * @return string the name of the model
    */
   abstract public function getModelName();
   
@@ -158,7 +158,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * Calls retrieveFromID with the "id" parameter of the request
    * 
    * @param Zend_Controller_Request_Http $request
-   * @return unknown_type
+   * @return Chof_Model_BaseModel
    */
   public function retrieveFromRequest(Zend_Controller_Request_Abstract $request)
   #****************************************************************************
@@ -175,7 +175,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * 
    * 
    * @param $id
-   * @return unknown_type
+   * @return Chof_Model_BaseModel
    */
   public function retrieveFromID($id)
   #****************************************************************************
@@ -254,7 +254,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * Resets entry state if matching id found.
    *
    * @param  int $id
-   * @return Default_Model_Guestbook
+   * @return Chof_Model_BaseModel
    */
   public function find()
   #****************************************************************************
@@ -298,10 +298,10 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   /**
    * Fetch a set of objects based on specific fetch parameters
    * 
-   * @see Default_Model_BaseMapper::fetch for further details
+   * @see Chof_Model_BaseMapper::fetch for further details
    * 
    * @param array $fetchparams
-   * @return list of matching models
+   * @return Chof_Model_BaseModel[] list of matching models
    */
   public function fetch(array $fetchparams = null)
   #****************************************************************************
@@ -317,7 +317,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * Performs the get function of a datetime field based on the given format
    *  
    * @param string $format as used by the utility class Chof_Util_TimeUtils
-   * @param unknown_type $datetime the datetime property
+   * @param string $datetime the datetime property
    */
   protected function getDateTime($format, $datetime)
   #****************************************************************************
@@ -396,7 +396,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * Set data mapper
    *
    * @param  mixed $mapper
-   * @return Default_Model_Guestbook
+   * @return Chof_Model_BaseModel
    */
   protected function setMapper($mapper)
   #****************************************************************************
@@ -410,7 +410,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    *
    * Lazy loads Default_Model_GuestbookMapper instance if no mapper registered.
    *
-   * @return Default_Model_GuestbookMapper
+   * @return Chof_Model_BaseMapper
    */
   public function getMapper()
   #****************************************************************************
@@ -461,7 +461,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
    * Set object state by an option style array
    *
    * @param  array $options in the form of "param" => value
-   * @return the model with the new parameters set
+   * @return Chof_Model_BaseModel the model with the new parameters set
    */
   public function setOptions(array $options)
   #****************************************************************************
@@ -482,7 +482,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   /**
    * Retrieves the last primary ID of the entity
    * 
-   * @return last primary id of the entity
+   * @return mixed last primary id of the entity
    */
   public function getLastID()
   #****************************************************************************
@@ -493,7 +493,7 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
   /**
    * Retrieves the last primary ID of the entity
    * 
-   * @return last primary id of the entity
+   * @return mixed last primary id of the entity
    */
   public function getCount($filter = false)
   #****************************************************************************

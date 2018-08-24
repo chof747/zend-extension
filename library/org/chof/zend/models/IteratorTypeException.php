@@ -38,9 +38,9 @@ class Chof_Model_IteratorTypeException extends Zend_Exception
    * The exception is created with the expected type, the found data type and 
    * the element which has the faulty type and caused the exception
    * 
-   * @param $expected_type a string denoting the expected type
-   * @param $found_type a string denoting the found type
-   * @param $element the element which caused the problem
+   * @param $expected_type string a string denoting the expected type
+   * @param $found_type string a string denoting the found type
+   * @param $element mixed the element which caused the problem
    */
   function __construct($expected_type, $found_type, $element = null)
   #*****************************************************************************

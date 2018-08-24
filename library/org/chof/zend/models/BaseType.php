@@ -29,7 +29,7 @@ class Chof_Model_BaseType
    * Set object state by an option style array
    *
    * @param  array $options in the form of "param" => value
-   * @return the model with the new parameters set
+   * @return Chof_Model_BaseType the model with the new parameters set
    */
   private function setOptions(array $options)
   #****************************************************************************

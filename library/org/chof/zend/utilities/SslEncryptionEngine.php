@@ -68,7 +68,7 @@ class Chof_Util_SslEncryptionEngine
 	 * Sets the private key and stores the key details for further processing
 	 * 
 	 * @param resource $privateKey the new private key
-	 * @return a reference to itself for method chaining
+	 * @return Chof_Util_SslEncryptionEngine a reference to itself for method chaining
 	 */
 	public function setPrivateKey($privateKey)
 	#****************************************************************************
@@ -91,7 +91,7 @@ class Chof_Util_SslEncryptionEngine
 	 * Sets the public key and stores the key details for further processing
 	 * 
 	 * @param resource $publicKey the new pulbic key
-	 * @return a reference to itself for method chaining
+	 * @return Chof_Util_SslEncryptionEngine  a reference to itself for method chaining
 	 */
 	public function setPublicKey($publicKey)
 	#****************************************************************************
@@ -153,7 +153,7 @@ class Chof_Util_SslEncryptionEngine
 	 * The information is either encrypted via the public (default) or private key
 	 * To switch this behaviour call reverseEncryptionMode(true).
 	 * 
-	 * @param unknown_type $information
+	 * @param mixed $information
 	 * @return true if the encryption was successfull, false otherwise
 	 * @throws SslEncryptionInformationTooLong if the information was too long
 	 */

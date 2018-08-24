@@ -25,7 +25,7 @@ interface Chof_Model_Interface_Arrayable
    *    }
    * </code>
    * 
-   * @return an array containing all properties of the object/class
+   * @return array an array containing all properties of the object/class
    */
   public function toArray($datetimefmt = '');
 }

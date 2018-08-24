@@ -47,7 +47,8 @@ class Chof_Zend_Template_VariableHandler_Registry
 	 * @param string $variable name of the variable
 	 * @param Chof_Zend_Template_VariableHandler_Interface $handler instance of the
 	 *                                                          handler
-	 * @return instance of the old variable handler if present. Null otherwise                                                         
+	 * @return Chof_Zend_Template_VariableHandler_Interface instance of the old 
+	 *         variable handler if present. Null otherwise                                                         
 	 */
 	public function registerHandler($variable,
 	  Chof_Zend_Template_VariableHandler_Interface $handler)
@@ -68,7 +69,8 @@ class Chof_Zend_Template_VariableHandler_Registry
 	 * no handler was registered return Null
 	 * 
 	 * @param string $variable
-	 * @return instance of the old handler or null otherwise
+	 * @return Chof_Zend_Template_VariableHandler_Interface instance of the old 
+	 *         handler or null otherwise
 	 */
 	public function unregisterHandler($variable)
   #*****************************************************************************

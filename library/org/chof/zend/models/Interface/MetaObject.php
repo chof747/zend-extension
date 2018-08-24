@@ -18,7 +18,7 @@ interface Chof_Model_Interface_MetaObject
    * meta object. The selection criteria has to be the part of a where statement
    * which will be executed upon the tPosition table
    * 
-   * @return the where part identifying all positions belonging to that
+   * @return string the where part identifying all positions belonging to that
    *         metaobject or null if the metaobject is not associated to the
    *         database
    */

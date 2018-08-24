@@ -2,7 +2,7 @@
 class Chof_Controller_Helper_ReRequest extends Zend_Controller_Action_Helper_Abstract
 {
   /**
-   *  @var Request to be redispatched
+   *  @var Zend_Controller_Request_Abstract request to be redispatched
    */
   protected $rerequest;
 

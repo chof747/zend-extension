@@ -118,7 +118,7 @@ class Chof_Zend_Mail extends Zend_Mail
    * Assigns a new template for this mailer object
    *  
    * @param Chof_Zend_Template $template
-   * @return a reference to itself for method chaining
+   * @return Chof_Zend_Mail a reference to itself for method chaining
    */
   public function setTemplate(Chof_Zend_Template $template)
 	#*****************************************************************************
@@ -146,7 +146,7 @@ class Chof_Zend_Mail extends Zend_Mail
    *   with real values
    * @param  string $charset see Zend_Mail
    * @param  string $encoding see Zend_Mail
-   * @return reference to itself for method chaining 
+   * @return Chof_Zend_Mail reference to itself for method chaining 
    */
   public function setBody(Chof_Zend_Template_FilloutInterface $filler,
                           $charset = null, 

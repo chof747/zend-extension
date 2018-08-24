@@ -16,7 +16,7 @@ interface Chof_Util_Interface_Authentication
    * @param string $login
    * @param string $password
    * 
-   * @return valid identity or false
+   * @return string|boolean valid identity or false
    */
   public function validate($login, $password);
 }

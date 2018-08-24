@@ -48,7 +48,7 @@ class Chof_Controller_Helper_Params extends Zend_Controller_Action_Helper_Abstra
    * Set the http request body parameters
    *
    * @param  array $params
-   * @return Scrummer_Controller_Action
+   * @return Zend_Controller_Action
    */
   public function setBodyParams(array $params)
   #*****************************************************************************

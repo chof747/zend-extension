@@ -3,9 +3,9 @@
 /**
  * Template class for mail templates:
  * 
- * - Templates are text files in a specific directory Ð stored by topics in 
+ * - Templates are text files in a specific directory ï¿½ stored by topics in 
  *   subdirectories as the system requests it.
- * - Variables in templates are inclosed by <? VARIABLE[=ÕDEFAULTÕ] ?> tags, 
+ * - Variables in templates are inclosed by <? VARIABLE[=ï¿½DEFAULTï¿½] ?> tags, 
  *   where DEFAULT is a possibly quoted default value if the variable has not 
  *   been provided by the calling code 
  * 
@@ -176,7 +176,7 @@ class Chof_Zend_Template
    * set to the constant STD_LANGUAGE of this class (usually 'en') 
    * 
    * @param string $language
-   * @return a reference to itself for method chaining
+   * @return Chof_Zend_Template a reference to itself for method chaining
    */
   protected function setLanguage($language)
 	#*****************************************************************************
@@ -206,7 +206,7 @@ class Chof_Zend_Template
    * directory is used
    * 
    * @param  string $templateName
-   * @return a reference to itself for method chaining
+   * @return Chof_Zend_Template a reference to itself for method chaining
    */
   protected function assignTemplateFile($templateName)
 	#*****************************************************************************

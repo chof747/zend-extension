@@ -62,9 +62,9 @@ class Chof_Model_Import_ErrorIterator extends Chof_Model_BaseIterator
    *                                                   critical as $eClass
    *    
    * 
-   * @param $errors the array of errors
-   * @param $eClass the error class
-   * @param $type   the type of filter
+   * @param $errors array the array of errors
+   * @param $eClass integer the error class
+   * @param $type integer the type of filter
    */
   public function __construct(&$errors, $eClass = E_ERROR, $type = 1) 
   #****************************************************************************

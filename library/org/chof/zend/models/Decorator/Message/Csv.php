@@ -12,7 +12,7 @@ class Chof_Model_Decorator_Message_Csv extends Chof_Model_Decorator_Message_Abst
   protected $DATEFMT = "mysql-date";
   
   /**
-   * @see Chof_ModelDecorator_Message_Abstract::getMessage()
+   * @see Chof_Model_Decorator_Message_Abstract::getMessage()
    */
   public function compose()
   #*****************************************************************************
