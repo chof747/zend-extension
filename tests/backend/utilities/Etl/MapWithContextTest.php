@@ -1,12 +1,24 @@
 <?php
 
-class MapWithContextTest extends BaseTestCase
+class MapWithContextTest extends TestCase_Base
 {
-  public function setUp()
-  //****************************************************************************
+  private static function transformDates($expected)
   {
-    parent::setUp();
-    $this->basepath .= '/etl/map';
+    $transformed = array();
+    foreach($expected as $row)
+    {
+      foreach($row as $key => $value)
+      {
+        if ($key == 'Graduation Date')
+        {
+          $row[$key] = Chof_Util_TimeUtils::returnTime('datetime', $value);
+        }
+      }
+      
+      $transformed[] = $row;
+    }
+    
+    return $transformed;
   }
   
   public function testByMethodsWithContext()
@@ -15,12 +27,12 @@ class MapWithContextTest extends BaseTestCase
     require_once(dirname(__FILE__)."/stubs/TestContext.php");
     
     $input = Chof_Util_Etl_Read_Json::read(
-      $this->pathto("bymethodssimple.json"));
-    $expected = Chof_Util_Etl_Read_Json::read(
-      $this->pathto('bymethodssimpleresult.json'));
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
+    $expected = self::transformDates(Chof_Util_Etl_Read_Json::read(
+      DataSetFixture::additionalFile("etl/map/bymethodssimpleresult.json")));
     
-    $json = Zend_Json::decode(
-        file_get_contents($this->pathto('structurewithmapping.json')));
+    $json = Zend_Json::decode(file_get_contents(
+      DataSetFixture::additionalFile("etl/map/structurewithmapping.json")));
     
     $this->assertArrayEquals($expected, Chof_Util_Etl_Map_ByMethods::map(
       $input, $json, new TestContext()));
@@ -33,9 +45,9 @@ class MapWithContextTest extends BaseTestCase
     $context = new TestContextWithErrors();
     
     $input = Chof_Util_Etl_Read_Json::read(
-      $this->pathto("bymethodssimple.json"));
-    $json = Zend_Json::decode(
-        file_get_contents($this->pathto('structurewithmapping.json')));
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
+    $json = Zend_Json::decode(file_get_contents(
+      DataSetFixture::additionalFile("etl/map/structurewithmapping.json")));
     
     $this->assertArrayEquals(array(), Chof_Util_Etl_Map_ByMethods::map(
       $input, $json, $context));
@@ -62,13 +74,13 @@ class MapWithContextTest extends BaseTestCase
     $context = new TestContext();
   
     $input = Chof_Util_Etl_Read_Json::read(
-        $this->pathto("bymethodssimple_error.json"));
-    $expected = Chof_Util_Etl_Read_Json::read(
-        $this->pathto('bymethodssimpleresult.json'));
+        DataSetFixture::additionalFile("etl/map/bymethodssimple_error.json"));
+    $expected = self::transformDates(Chof_Util_Etl_Read_Json::read(
+        DataSetFixture::additionalFile("etl/map/bymethodssimpleresult.json")));
     $expected = array($expected[1]);
     
-    $json = Zend_Json::decode(
-        file_get_contents($this->pathto('structurewithmapping.json')));
+    $json = Zend_Json::decode(file_get_contents(
+      DataSetFixture::additionalFile("etl/map/structurewithmapping.json")));
     
     $this->assertArrayEquals($expected, Chof_Util_Etl_Map_ByMethods::map(
         $input, $json, $context));

@@ -1,6 +1,6 @@
 <?php
 
-class TimeUtilsTest extends BaseTestCase
+class TimeUtilsTest extends TestCase_Base
 {
   public function testPeriod()
   //****************************************************************************

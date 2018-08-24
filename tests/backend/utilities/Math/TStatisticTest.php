@@ -1,6 +1,6 @@
 <?php
 
-class TStatisticTest extends BaseTestCase
+class TStatisticTest extends TestCase_Base
 {
   public function testTDistributionDoubleSided()
   //****************************************************************************

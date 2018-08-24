@@ -1,12 +1,12 @@
 <?php 
 
-class JsonReaderTest extends BaseTestCase
+class JsonReaderTest extends TestCase_Base
 {
   public function testJsonRead()
   //****************************************************************************
   {
     $data = Chof_Util_Etl_Read_Json::read(
-      dirname(__FILE__)."/../../../files/etl/jsonreader/simpletest.json");
+      DataSetFixture::additionalFile("etl/jsonreader/simpletest.json"));
     
     $this->assertArrayEquals(array(
       "first_name"=> "Winston",

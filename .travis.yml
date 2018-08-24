@@ -2,9 +2,10 @@ language: php
 php:
   - 5.6
 install:
-  - composer install --no-dev
+  - mysql < setuptestdb.sql
+  - composer install
 script:
-  - phpunit --bootstrap=tests/backend/bootstrap.php --log-junit=tests/logs/test-result.xml --report-useless-tests tests/
+  - vendor/bin/phpunit --log-junit=tests/logs/test-result.xml --report-useless-tests tests/
 services:
   - mysql
 notifications:

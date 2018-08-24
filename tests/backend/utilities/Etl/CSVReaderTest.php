@@ -1,6 +1,6 @@
 <?php 
 
-class CSVReaderTest extends BaseTestCase
+class CSVReaderTest extends TestCase_Base
 {
   public function testMatches()
   //****************************************************************************
@@ -14,7 +14,7 @@ class CSVReaderTest extends BaseTestCase
   private function comparecsv($expected, $file)
   //****************************************************************************
   {
-    $csvfile = dirname(__FILE__)."/../../../files/etl/csvreader/$file";
+    $csvfile = DataSetFixture::additionalFile("etl/csvreader/$file");
     $data = Chof_Util_Etl_Read_CSV::read($csvfile,1);
     $this->assertArrayEquals($expected, $data);  
   }
@@ -22,7 +22,7 @@ class CSVReaderTest extends BaseTestCase
   private function comparecsvExt($expected, $file, $headers, $delimiter, $enclosure)
   //****************************************************************************
   {
-    $csvfile = dirname(__FILE__)."/../../../files/etl/csvreader/$file";
+    $csvfile = DataSetFixture::additionalFile("etl/csvreader/$file");
     $data = Chof_Util_Etl_Read_CSV::read($csvfile,$headers, $delimiter, $enclosure);
     $this->assertArrayEquals($expected, $data);  
   }

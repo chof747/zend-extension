@@ -1,13 +1,13 @@
 <?php
 
-class EncryptionTest extends BaseTestCase
+class EncryptionTest extends TestCase_Base
 {
 	
   public function testResource()
   //****************************************************************************
   {
   	//$bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-  	$this->assertTrue($this->bootstrap->getBootstrap()->hasPluginResource('sslEncryption'));
+  	$this->assertTrue($this->application->getBootstrap()->hasPluginResource('sslEncryption'));
   	
   }
 /**
@@ -15,7 +15,7 @@ class EncryptionTest extends BaseTestCase
  */private function getSslResource()
   //****************************************************************************
   {
-    $sslResource = $this->bootstrap->getBootstrap()->getPluginResource('sslEncryption');
+    $sslResource = $this->application->getBootstrap()->getPluginResource('sslEncryption');
   	return $sslResource->init();
   }
 

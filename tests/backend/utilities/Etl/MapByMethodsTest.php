@@ -1,12 +1,24 @@
 <?php
 
-class MapByMethodsTest extends BaseTestCase
+class MapByMethodsTest extends TestCase_Base
 {
-  public function setUp()
-  //****************************************************************************
+  private static function transformDates($expected)
   {
-    parent::setUp();
-    $this->basepath .= '/etl/map';
+    $transformed = array();
+    foreach($expected as $row)
+    {
+      foreach($row as $key => $value)
+      {
+        if ($key == 'Graduation Date')
+        {
+          $row[$key] = Chof_Util_TimeUtils::returnTime('datetime', $value);
+        }
+      }
+      
+      $transformed[] = $row;
+    }
+    
+    return $transformed; 
   }
   
   public function testByMethodsMapper()
@@ -15,10 +27,12 @@ class MapByMethodsTest extends BaseTestCase
     require_once(dirname(__FILE__)."/stubs/TestMapper.php");
     
     $input = Chof_Util_Etl_Read_Json::read(
-      $this->pathto("bymethodssimple.json"));
-    $expected = Chof_Util_Etl_Read_Json::read(
-      $this->pathto('bymethodssimpleresult.json'));
-    
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
+    $expected = self::transformDates(Chof_Util_Etl_Read_Json::read(
+      DataSetFixture::additionalFile("etl/map/bymethodssimpleresult.json")));
+    ZLOG($expected);
+    //$expected=Chof_Util_Etl_Read_Json::read(
+    //  DataSetFixture::additionalFile("etl/map/bymethodssimpleresult.json")); 
     $this->assertArrayEquals($expected, TestMapper::map($input));
   } 
   
@@ -28,12 +42,13 @@ class MapByMethodsTest extends BaseTestCase
     require_once(dirname(__FILE__)."/stubs/TestMapperWithoutDef.php");
     
     $json = Zend_Json::decode(
-      file_get_contents($this->pathto('simplestructure.json')));
+      file_get_contents(
+        DataSetFixture::additionalFile("etl/map/simplestructure.json")));
 
     $input = Chof_Util_Etl_Read_Json::read(
-      $this->pathto("bymethodssimple.json"));
-    $expected = Chof_Util_Etl_Read_Json::read(
-      $this->pathto('bymethodssimpleresult.json'));
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
+    $expected = self::transformDates(Chof_Util_Etl_Read_Json::read(
+      DataSetFixture::additionalFile("etl/map/bymethodssimpleresult.json")));
     
     $this->assertArrayEquals($expected, TestMapperWithoutDef::map($input, $json));
   }
@@ -44,12 +59,13 @@ class MapByMethodsTest extends BaseTestCase
     require_once(dirname(__FILE__)."/stubs/TestMapperOnlyComplex.php");
     
     $json = Zend_Json::decode(
-      file_get_contents($this->pathto('structurewithmapping.json')));
+      file_get_contents(
+        DataSetFixture::additionalFile("etl/map/structurewithmapping.json")));
 
     $input = Chof_Util_Etl_Read_Json::read(
-      $this->pathto("bymethodssimple.json"));
-    $expected = Chof_Util_Etl_Read_Json::read(
-      $this->pathto('bymethodssimpleresult.json'));
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
+    $expected = self::transformDates(Chof_Util_Etl_Read_Json::read(
+      DataSetFixture::additionalFile("etl/map/bymethodssimpleresult.json")));
     
     $this->assertArrayEquals($expected, TestMapperOnlyComplex::map($input, $json));    
   }
@@ -60,12 +76,13 @@ class MapByMethodsTest extends BaseTestCase
     require_once(dirname(__FILE__)."/stubs/TestMapperOnlyComplex.php");
   
     $json = Zend_Json::decode(
-      file_get_contents($this->pathto('structurewithmappinganddefaults.json')));
+      file_get_contents(
+        DataSetFixture::additionalFile("etl/map/structurewithmappinganddefaults.json")));
 
     $input = Chof_Util_Etl_Read_Json::read(
-      $this->pathto("bymethodssimple.json"));
-    $expected = Chof_Util_Etl_Read_Json::read(
-      $this->pathto('bymethodsconstantsresult.json'));
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
+    $expected = self::transformDates(Chof_Util_Etl_Read_Json::read(
+      DataSetFixture::additionalFile("etl/map/bymethodsconstantsresult.json")));
     
     $this->assertArrayEquals($expected, TestMapperOnlyComplex::map($input, $json));
     
@@ -81,7 +98,7 @@ class MapByMethodsTest extends BaseTestCase
     require_once(dirname(__FILE__)."/stubs/TestMapperWithoutDef.php");
     
     $input = Chof_Util_Etl_Read_Json::read(
-        $this->pathto("bymethodssimple.json"));
+      DataSetFixture::additionalFile("etl/map/bymethodssimple.json"));
     TestMapperWithoutDef::map($input);
   }
 }
