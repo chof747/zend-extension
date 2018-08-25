@@ -1,11 +1,23 @@
 language: php
 php:
   - 5.6
+
 install:
   - mysql < setuptestdb.sql
   - composer install
 script:
   - vendor/bin/phpunit --log-junit=tests/logs/test-result.xml --report-useless-tests tests/
+  
+deploy:
+  provider: s3
+  access_key_id: 
+    secure: "i7IfwKlNkBAWEit3Gy+YrMogENlL3CMLCZj4gmcgVt5T1J7xG8+XG5KK5nAcQlR/+Bnf9lX3hRfjh79jC4qcelg9LlRnW5d9wYHS3X8n8If1Aw68erQKQsEHiS5ojQKG4DyobkJ8st9by0vXAM4rrDM2vQtotGfq4sZhn1E+jwmhepHWQhvcpocyaPfM0lzC2UHd0eLH6cDm2Qj/9aoXXM9fVKOLigyuBycbK5x1NJhXPBFYFcJmdYqGVdmkJ874co8yKlwFFONU+4zmAv3IxERyiNHHunfDkwiqT+AA5Tdi2GGe/2e637+9QFdgqe5gfHMJSMKvF95RIbN7o+87OyITxQMGH/W2Tp1m+6l+gEONPn5fa++vb33/usgKWggVSXABeVtQkIjnOX9FSOAHgWZXKLJrspL6fcVhdem6oX8WbDRaB2d9cGLjbSZ+xnbI4d33nce538vnDdsg2rbmUx3FpNxHm1Lb/BhvHIZc/TbH2HOkxkYQYViAW7jbBRIpiD47+zYMYxLLPGy0d2VloW+M0ID1EHQS/5o8ybDeWY+CjGbhuWBfVfm2NHqSyx+4po2nuVvvDRYQafzCF540Ik+y7VaGjQ8ffFJ22uNqaQixl5VuljuTs+v9niHQHYgPkpMlg3oEQVQRd3t2S9jIq60NXVIDXZYAUSLxt0JqDF8="
+  secret_access_key: 
+    secure: "Tsmn4PHIYhJwdUr0QTagCmomMhNdPgIAVMsW9mfpvOqDyhSEjpgR4zZbJiwZL3I5H61LyOn2g1JNa2wROdyjebXrVzU0x8buLQn5e1gtwBQNoX5uUvJXE93rfWw71Yv2t2uqf8jld8s4MK0pWItARkkvpg5rIXyvjvVexRqu5fjInpXMKArDHr291T7EY4N/FgKLedNMHy6KwXYMrX/qHhZFiPcg8C21xTsLVFNImt5ZyF4QhVGbkb4NfQGGJwDsZlSb5tBMtPSoMH5n2y04rJP4ByTfMkEWWUyRVgWYTG8BB/VAtlsm09Z0if8YkJChPzkWfQXI7oJ6oNpeiiVa54YSW0zHmt+N1bCnUBmq5+OVfGnyptiqYmoVH28MR83dF/Q6UQD0TINPHYZoHAWZJRp4e4y7+2behNypC4uAymUmkF6VWGt+ssJ2T/0RHOjqsrKcm+8fS3/S0hDhsm1PJ1MlU4QbBWg9wf97a2thfyPN/MzvL1+oC1+5xD+bp7BpyMZ7PfBB2VYqF5OWI5STdOvC4+G59sz1QJr7e1SuDDqBLbn7/f5buFeVjZ+JFLLi27XCt5GQ3FacTEDdvyR3tOPb7dBNUK2hbbzk+1iCr2enj/1g2I7gkBOah2rpZ7GT1q13jt8osrAJGF4ukE+7kj7i8i+4OMNsKITW9lFepc4="
+  region: eu-west-1  
+  bucket: "org.chof.builds"
+  upload-dir: zend-extension
+  
 services:
   - mysql
 notifications:
