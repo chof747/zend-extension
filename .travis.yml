@@ -17,7 +17,7 @@ deploy:
   region: eu-west-1  
   bucket: "org.chof.builds"
   upload-dir: zend-extension
-   on:
+  on:
     all_branches: true
   
 services:
