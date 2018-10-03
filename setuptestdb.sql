@@ -10,7 +10,7 @@ GRANT SELECT, UPDATE, DELETE, EXECUTE ON `zendtest`.* TO `zend-user`@`localhost`
 
 use `zendtest`;
 
-CREATE TABEL `tauthor` (
+CREATE TABLE `tauthor` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `NAME` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
   `FAMILYNAME` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
