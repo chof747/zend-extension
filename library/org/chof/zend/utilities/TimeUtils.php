@@ -17,7 +17,7 @@ function threeAlternatives($pcn, $date, $prev,$current,$next)
   }
 }
 
-class Chof_Util_TimeUtils 
+class Chof_Util_TimeUtils
 {
   public static $MAP_INTERVAL_PERIOD = array(
     'P3M' => 'Q',
@@ -25,7 +25,7 @@ class Chof_Util_TimeUtils
     'P1Y' => 'Y',
     'P1W' => 'W',
     'P7D' => 'W'
-  );  
+  );
   
   public static function today()
   //****************************************************************************
@@ -52,10 +52,10 @@ class Chof_Util_TimeUtils
   
   public static function transformTime($newFormat, $time)
   //****************************************************************************
-	{
-		$dtime  = self::returnTime('datetime', $time);
-		return self::returnTime($newFormat, $dtime);
-	}
+  {
+    $dtime  = self::returnTime('datetime', $time);
+    return self::returnTime($newFormat, $dtime);
+  }
   
   public static function returnTime($format, $time)
   //****************************************************************************
@@ -67,8 +67,9 @@ class Chof_Util_TimeUtils
     }
     else if (is_numeric($time))
     {
+      $t = $time;
       $time = new DateTime();
-      $time->setTimeStamp($time);
+      $time->setTimeStamp($t);
     }
     
     $format = ($format == '') ? 'mysql' : $format;
@@ -108,23 +109,23 @@ class Chof_Util_TimeUtils
         case 'datetime-long'   : $format = 'l, d.M.Y H:i:s e'; break;
         case 'datetime-short'  : $formst = 'd.M.Y H:i:s'; break;
       }
-
+      
       return $time->format($format);
     }
-  }    
+  }
   
   private static function makePeriod($period)
   //****************************************************************************
   {
-  	switch ($period)
-  	{
-  		case 'Y' : return 'P1Y'; 
-  		case 'H' : return 'P6M';
-  		case 'Q' : return 'P3M';
-  		case 'W' : return 'P1W';
-  		case 'D' : return 'P1D';
-  		default:   return 'P1M';
-  	}
+    switch ($period)
+    {
+      case 'Y' : return 'P1Y';
+      case 'H' : return 'P6M';
+      case 'Q' : return 'P3M';
+      case 'W' : return 'P1W';
+      case 'D' : return 'P1D';
+      default:   return 'P1M';
+    }
   }
   
   private static function periodBegin(DateTime $date, $period, $pcn = -1)
@@ -136,39 +137,39 @@ class Chof_Util_TimeUtils
     
     switch ($period)
     {
-    	case 'D' : 
-    	  return threeAlternatives($pcn, $date, 'P1D', 'P0D', 'P1D');
-    	case 'W' : 
-    	  $wd = ($date->format('w') + 6) % 7;
-    	  return threeAlternatives($pcn, $date, 'P'.($wd+7).'D',
-    	                                        'P'.($wd).'D',
-    	                                        'P'.(7-$wd).'D');
-    	                                        
-    	case 'Y' : 
-    	  $date->setDate($year, 1, 1);
-    	  return threeAlternatives($pcn, $date, 'P1Y', 'P0Y', 'P1Y');
-    	case 'H' :  
-    	  $hm = floor(($month-1)/6) * 6 + 1;
-    	  $date->setDate($year, $hm, 1);
-    	  return threeAlternatives($pcn, $date, 'P6M', 'P0M', 'P6M');
-    	   
-    	case 'Q' : 
-    	  $qm = floor(($month-1)/3) * 3 + 1;
-    	  $date->setDate($year, $qm, 1);
-    	  return threeAlternatives($pcn, $date, 'P3M', 'P0M', 'P3M');
-    	
-    	default:  
-    	  $date->setDate($year, $month, 1);
-    	  return threeAlternatives($pcn, $date, 'P1M', 'P0M', 'P1M');
-    	   
+      case 'D' :
+        return threeAlternatives($pcn, $date, 'P1D', 'P0D', 'P1D');
+      case 'W' :
+        $wd = ($date->format('w') + 6) % 7;
+        return threeAlternatives($pcn, $date, 'P'.($wd+7).'D',
+          'P'.($wd).'D',
+          'P'.(7-$wd).'D');
+        
+      case 'Y' :
+        $date->setDate($year, 1, 1);
+        return threeAlternatives($pcn, $date, 'P1Y', 'P0Y', 'P1Y');
+      case 'H' :
+        $hm = floor(($month-1)/6) * 6 + 1;
+        $date->setDate($year, $hm, 1);
+        return threeAlternatives($pcn, $date, 'P6M', 'P0M', 'P6M');
+        
+      case 'Q' :
+        $qm = floor(($month-1)/3) * 3 + 1;
+        $date->setDate($year, $qm, 1);
+        return threeAlternatives($pcn, $date, 'P3M', 'P0M', 'P3M');
+        
+      default:
+        $date->setDate($year, $month, 1);
+        return threeAlternatives($pcn, $date, 'P1M', 'P0M', 'P1M');
+        
     }
     
   }
   
   /**
    * Returns the start and end date of a specific period in time
-   * 
-   * 
+   *
+   *
    * @param DateTime $date
    * @param string $period
    * @param integer $pcn
@@ -187,80 +188,80 @@ class Chof_Util_TimeUtils
   public static function printPeriodsByTemplate($template)
   //****************************************************************************
   {
-  	$periods = array(
-  	  'Y' => 'yearly',
-  	  'H' => 'half-yearly',
-  	  'Q' => 'quaterly',
-  	  'M' => 'monthly',
-  	  'W' => 'weekly',
-  	  'D' => 'daily' );
-  	
-  	$results = array();
-  	
-  	foreach($periods as $symbol => $name)
-  	{
-  		$results[$symbol] = sprintf($template, $symbol, $name);
-  	}
-  	
-  	return $results;
+    $periods = array(
+      'Y' => 'yearly',
+      'H' => 'half-yearly',
+      'Q' => 'quaterly',
+      'M' => 'monthly',
+      'W' => 'weekly',
+      'D' => 'daily' );
+    
+    $results = array();
+    
+    foreach($periods as $symbol => $name)
+    {
+      $results[$symbol] = sprintf($template, $symbol, $name);
+    }
+    
+    return $results;
   }
   
   /**
    * retrieves the date interval corresponding to the provided period identifier
-   * 
+   *
    * Y - yearly
    * H - half-yearly
    * Q - quaterly
    * M - monthly
    * W - weekly
    * D - daily
-   * 
+   *
    * @param string $period
    * @return DateInterval the corresponding date interval object
    */
   public static function intervalFromPeriod($period)
   //***************************************************************************
-  {  	
-  	return new DateInterval(Chof_Util_TimeUtils::makePeriod($period));
+  {
+    return new DateInterval(Chof_Util_TimeUtils::makePeriod($period));
   }
   
   public static function closestIntervalStart(DateTime $startDate, $period)
   //***************************************************************************
   {
-  	$start = clone $startDate;
-  	$dateparts = getdate($start->getTimeStamp());
-  	
-  	switch($period)
-  	{
-  		case 'Y' : 
-  			$start->setDate($dateparts['year'], 1, 1); 
-  			break;
-  		
-  		case 'H' :
-  			$start->setDate($dateparts['year'],
-  			                ($dateparts['mon'] <= 6) ? 1 : 7,
-  			                1);
-  			break;
-  		
-  	  case 'Q' : 
-  			$start->setDate($dateparts['year'],
-  			                floor(($dateparts['mon'] - 1) / 3) * 3 + 1,
-  			                1);
-  			break;
-  	  
-  	  case 'M' :
-  	  	$start->setDate($dateparts['year'],
-  	  	                $dateparts['mon'],
-  	  	                1);
-  	  	break;
-
-  	  case 'W' :
-  	    $daydiff = ($dateparts['wday'] == 0) ? 6 : $dateparts['wday'] - 1;
-  	    $start->sub(new DateInterval('P'.$daydiff.'D'));
-  	    break; 
-  	}
-  	
-  	return $start;
+    $start = clone $startDate;
+    $dateparts = getdate($start->getTimeStamp());
+    
+    switch($period)
+    {
+      case 'Y' :
+        $start->setDate($dateparts['year'], 1, 1);
+        break;
+        
+      case 'H' :
+        $start->setDate($dateparts['year'],
+        ($dateparts['mon'] <= 6) ? 1 : 7,
+        1);
+        break;
+        
+      case 'Q' :
+        $start->setDate($dateparts['year'],
+        floor(($dateparts['mon'] - 1) / 3) * 3 + 1,
+        1);
+        break;
+        
+      case 'M' :
+        $start->setDate($dateparts['year'],
+        $dateparts['mon'],
+        1);
+        break;
+        
+      case 'W' :
+        $daydiff = ($dateparts['wday'] == 0) ? 6 : $dateparts['wday'] - 1;
+        $start->sub(new DateInterval('P'.$daydiff.'D'));
+        break;
+    }
+    
+    return $start;
   }
 }
 ?>
