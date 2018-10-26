@@ -67,8 +67,9 @@ class Chof_Util_TimeUtils
     }
     else if (is_numeric($time))
     {
+      $t = $time;
       $time = new DateTime();
-      $time->setTimeStamp($time);
+      $time->setTimeStamp($t);
     }
     
     $format = ($format == '') ? 'mysql' : $format;
