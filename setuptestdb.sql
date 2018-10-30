@@ -1,9 +1,31 @@
 DROP DATABASE IF EXISTS zendtest;
 CREATE DATABASE zendtest;
 
+CREATE TABLE `zendtest`.`tindex` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `NAME`        char(40) NOT NULL,
+  `ISSUER`      varchar(80) NOT NULL,
+  `DATE_START`  date NOT NULL,
+  `DESCRIPTION` varchar(240),
+  `EXTERNAL_KEY` char(40) DEFAULT '',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `INDEX_NAME` (`NAME`),
+  KEY `INDEX_EXTERNAL_KEY` (`EXTERNAL_KEY`)
+) ENGINE=InnoDB AUTO_INCREMENT=14947 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+CREATE TABLE `zendtest`.`tindexvalue`(
+  `FK_INDEX_ID` int(10) unsigned NOT NULL,
+  `DATE_VALUE`   date NOT NULL,
+  `VALUE`        decimal(12,6) DEFAULT '100.000000',
+  PRIMARY KEY (`FK_INDEX_ID`, `DATE_VALUE`),
+  KEY `FK_INDEX_INDEXVALUE` (`FK_INDEX_ID`),
+  CONSTRAINT `FK_INDEX_INDEXVALUE` FOREIGN KEY (`FK_INDEX_ID`) REFERENCES `zendtest`.`tindex` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=14947 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
 GRANT USAGE ON *.* TO 'zend-user'@'localhost' IDENTIFIED BY 'password';
 DROP USER 'zend-user'@'localhost';
 
 -- DROP USER `zend-user`@`localhost`;
 CREATE USER `zend-user`@`localhost` IDENTIFIED BY "zend";
-GRANT SELECT, UPDATE, DELETE, EXECUTE ON `zendtest`.* TO `zend-user`@`localhost`;
+GRANT SELECT, UPDATE, DELETE, DROP, INSERT, EXECUTE ON `zendtest`.* TO `zend-user`@`localhost`;
+

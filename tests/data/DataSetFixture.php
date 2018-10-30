@@ -35,6 +35,13 @@ class DataSetFixture
   #*****************************************************************************
   {
     $dataSet = new PHPUnit_Extensions_Database_DataSet_CsvDataSet();
+    
+    $dataSet->addTable('tindex',
+      dirname(__FILE__).'/initial/index_test.csv');
+    $dataSet->addTable('tindexvalue',
+      dirname(__FILE__).'/initial/indexvalue_test.csv');
+    
+    
     /*
     $dataSet->addTable('queuetest.message',
         dirname(__FILE__).'/initial/queue_message.csv');

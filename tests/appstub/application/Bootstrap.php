@@ -36,12 +36,35 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
   }
   
+  protected function _initAutoload()
+  #*****************************************************************************
+  {
+    $autoloader = new Zend_Application_Module_Autoloader(array(
+      'namespace' => 'Default_',
+      'basePath'  => dirname(__FILE__),
+    ));
+    
+    $autoloader->addResourceTypes(array(
+      'utilities' => array(
+        'path' => 'utilities',
+        'namespace' => 'Util_')));
+    
+    return $autoloader;
+  }  
+  
+  protected function _initValidators()
+  #*****************************************************************************
+  {
+    Zend_Validate::addDefaultNamespaces(array('Default_Model_Validator'));
+  }
+  
+  
   protected function _initLogger()
   #*****************************************************************************
   {
     $writer = new Zend_Log_Writer_Stream(dirname(__File__).'/../../logs/testlog.txt');
     $logger = new Chof_Util_Log($writer);
-    $logger->registerErrorHandler();
+    //$logger->registerErrorHandler();
     
     Zend_Registry::set('logger', $logger);
     
