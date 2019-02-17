@@ -232,16 +232,9 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
             $result[] = $this->saveItem($this->model, $new, $entry);
           }        
         }
-        $this->composeOutput("", $new ? 201 : 200);
-        return $result;
-        
-      }
-      else
-      {
-        return false;
+        $this->composeOutput("", $new ? 201 : 200);        
       }
     }
-    
     catch (Chof_Model_ValidationException $e)
     {
       $this->getResponse()->appendBody(Zend_Json::encode(
@@ -254,7 +247,7 @@ abstract class Chof_Controller_RestController extends Zend_Rest_Controller
       ->setHttpResponseCode(500);
     }
     
-    return false;
+    return $result;
   }
 
   private function saveItem($item, $new, $data)
