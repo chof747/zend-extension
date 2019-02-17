@@ -21,7 +21,6 @@ defined('TESTFILES_PATH')
 
 //echo(get_include_path()."\n");
 $includePaths = array(
-  realpath(dirname(__FILE__) .'/../../vendor/zendframework/zendframework1/library'),    
   realpath(dirname(__FILE__) .'/../../library/'),    
   get_include_path());
 set_include_path(implode(PATH_SEPARATOR, $includePaths));

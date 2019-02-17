@@ -19,7 +19,10 @@ class Chof_Util_Etl_Read_CSV extends Chof_Util_Etl_Read
       
       $columns = self::prepare($fhandle, 
                                $headers, $delimiter, $enclosure);
-      $colcount = (count($columns) == 0) ? null : count($columns);
+      $colcount = (is_array($columns))
+        ? ((count($columns) == 0) ? null : count($columns))
+        : null;
+        
       while($line = fgets($fhandle))
       {
         $linenumber++;

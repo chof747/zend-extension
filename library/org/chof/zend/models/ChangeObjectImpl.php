@@ -2,7 +2,7 @@
 class Chof_Model_ChangeObjectImpl
   implements Chof_Model_Interface_ChangeObject
 {
-  private $_changeTrackers = null;
+  private $_changeTrackers = array();
   private $changed = false;
   
   /**

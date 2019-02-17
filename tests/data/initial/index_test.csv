@@ -1,0 +1,3 @@
+ID,NAME,ISSUER,DATE_START,DESCRIPTION,EXTERNAL_KEY
+1,VPI 2005,Statistik Austria,2005-12-31,"Verbraucherpreisindex 2005 der Statistik Austria","VPI_05"
+2,LHKI 45,Historic Indexer,1945-12-31,"Pricing index since 1945",""
