@@ -12,6 +12,7 @@ class ClassFinderTest extends TestCase_Base
    
     $this->assertArrayEquals(
       array(
+        'Default_Model_Hierarchy_Empty',
         'Default_Model_Hierarchy_StrategyA',
         'Default_Model_Hierarchy_StrategyB'
       ), $classlist);

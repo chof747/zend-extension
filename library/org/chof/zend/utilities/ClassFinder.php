@@ -20,7 +20,7 @@ class Chof_Util_ClassFinder
         if (!$filename->isDir())
         {
           $className = $filename->getBasename('.php');
-          if (($className <> $indicatorClass) && ($className != 'Abstract'))
+          if (($className != 'Abstract'))
           {
             $classes[] = $baseName.'_'.$className;
           }
