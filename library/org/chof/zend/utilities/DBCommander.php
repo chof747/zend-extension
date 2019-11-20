@@ -67,11 +67,12 @@ class Chof_Util_DBCommander
   {
     if ($this->transactionCount == 0)
     {
+      //DLOG("Start:");
       $this->dbHandle->beginTransaction();
     }
     
     ++$this->transactionCount;
-    //echo $this->transactionCount;
+    //DLOG($this->transactionCount);
     return $this;
   }
   
@@ -81,7 +82,7 @@ class Chof_Util_DBCommander
     if ($this->transactionCount<=0) return;
     
     --$this->transactionCount;
-    //echo $this->transactionCount;
+    //DLOG("commit : ".$this->transactionCount);
     if($this->transactionCount == 0)
     {
       $this->dbHandle->commit();
@@ -95,7 +96,8 @@ class Chof_Util_DBCommander
   {
   	if ($this->transactionCount > 0)
   	{
-	    $this->dbHandle->rollback();
+  	  //DLOG("rollback : ".$this->transactionCount);
+  	  $this->dbHandle->rollback();
 	    $this->transactionCount = 0;
   	}
   	    

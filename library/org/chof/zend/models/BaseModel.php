@@ -283,7 +283,10 @@ abstract class Chof_Model_BaseModel extends Chof_Model_ChangeObjectImpl
       $select->limit($to - $from + 1, $from);   
     }
     
-    if ((is_string($order)) || ($order instanceof Zend_Db_Expr))
+    if ((is_string($order)) || ($order instanceof Zend_Db_Expr) || 
+      ((is_array($order)) && (!array_filter($order, function($o) {
+        !((is_string($o)) && ($o instanceof Zend_Db_Expr));
+    }))))
     {
       $select->order($order);
     }
