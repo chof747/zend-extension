@@ -5,23 +5,20 @@ class Chof_Controller_Helper_ReRequest extends Zend_Controller_Action_Helper_Abs
    *  @var Zend_Controller_Request_Abstract request to be redispatched
    */
   protected $rerequest;
+  protected $session;
 
   /**
    * Registry key under which actions are stored
    * @var string
    */
-  static protected $registryKey = 'Chof_Controller_Helper_ReRequest';
-  private $sessionkey = '';  
 
   public function init()
   #*****************************************************************************
   {
-    $this->sessionkey = Zend_Registry::get('appname').'_'.self::$registryKey;
-    //ZLOG($_SESSION);
-    if (isset($_SESSION[$this->sessionkey]))
+    $this->session = new Zend_Session_Namespace(Zend_Registry::get('appname'));
+    if (isset($this->session->Chof_Controller_Helper_ReRequest))
     {
-      $this->rerequest = $_SESSION[$this->sessionkey];
-      //ZLOG($this->rerequest->getActionName().' - '.$this->rerequest->getParam('id', false));
+      $this->rerequest = $this->session->Chof_Controller_Helper_ReRequest;
     }
     else
     {
@@ -45,7 +42,7 @@ class Chof_Controller_Helper_ReRequest extends Zend_Controller_Action_Helper_Abs
         $this->rerequest['uri'] = $request->getRequestUri();
       }
       
-      $_SESSION[$this->sessionkey] = $this->rerequest;
+      $this->session->Chof_Controller_Helper_ReRequest = $this->rerequest;
     } 
   }
   
@@ -58,7 +55,7 @@ class Chof_Controller_Helper_ReRequest extends Zend_Controller_Action_Helper_Abs
     } 
     else if ($this->rerequest != null)
     { 
-      //echo $this->rerequest->getActionName(). " - ".$this->rerequest->getControllerName()."<br/>\n";
+      #ZLOG($this->rerequest->getActionName(). " - ".$this->rerequest->getControllerName());
       $request = $this->getActionController()->getRequest();
       $request->clearParams();
       $request->setModuleName($this->rerequest['module'])
@@ -72,7 +69,7 @@ class Chof_Controller_Helper_ReRequest extends Zend_Controller_Action_Helper_Abs
       }
 
       $request->setDispatched(false);
-      unset($_SESSION[$this->sessionkey]);
+      unset($this->session->Chof_Controller_Helper_ReRequest);
     }
     else
     {

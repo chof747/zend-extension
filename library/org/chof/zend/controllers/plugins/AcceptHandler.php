@@ -55,13 +55,21 @@ class Chof_Controller_Plugin_AcceptHandler extends Zend_Controller_Plugin_Abstra
   #*****************************************************************************
   {
     $querystr = $this->getRequest()->getServer('QUERY_STRING');
-        preg_match('/sort\(([\+\-])(\w+)\)/i', $querystr, $sorting);
-        
-     if ($sorting) 
-     {
-       $this->getRequest()->setParam('order', 
-        ("$sorting[2] ".(($sorting[1] == '-') ? "DESC" : "ASC")));
-     }
+       preg_match('/sort\((.*)\)/i', $querystr,$sorting);
+       if ($sorting)
+       {
+         $sorts = explode(',', $sorting[1]);
+         $order = array();
+         foreach($sorts as $sort)
+         {
+           $dir = substr($sort,0,1);
+           $field = substr($sort,1,strlen($sort)-1);
+           ZLOG("$dir => $field");
+           $order[] = $field.(( $dir == '-') ? " DESC" : " ASC");
+         }
+         
+         $this->getRequest()->setParam('order', $order);
+       }
   }
 }
 
