@@ -64,7 +64,6 @@ class Chof_Controller_Plugin_AcceptHandler extends Zend_Controller_Plugin_Abstra
          {
            $dir = substr($sort,0,1);
            $field = substr($sort,1,strlen($sort)-1);
-           ZLOG("$dir => $field");
            $order[] = $field.(( $dir == '-') ? " DESC" : " ASC");
          }
          
