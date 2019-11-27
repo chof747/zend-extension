@@ -40,17 +40,25 @@ class Chof_Model_Validator_ModelLink extends Zend_Validate_Abstract
     }
     else if (($value<>0) || ($value<>''))
     {
-      try
+      $model = (!is_array($this->model)) ? array($this->model) : $this->model;
+      $found = false;
+      
+      foreach($model as $modelName)
       {
-        $modelName = $this->model;
-        $model = new $modelName();
-        $model->retrieveFromID($value);
+        try
+        {
+          $model = new $modelName();
+          $model->retrieveFromID($value);
+          $found = true;
+          break;
+        }
+        catch(Chof_Util_ItemNotFoundException $e)
+        {
+          $this->_error(self::MSG_MUSTEXIST);
+        }
       }
-      catch(Chof_Util_ItemNotFoundException $e)
-      {
-        $this->_error(self::MSG_MUSTEXIST);
-        return false;
-      }
+      
+      return $found;
     }
     
     return true;
